@@ -103,19 +103,13 @@ public class PixelPlayer {
     }
 
     public Object getValueByName(String name) {
-        switch (name.toLowerCase()) {
-            case "painted":
-                return this.painted;
-            case "nextpixel":
-                return this.nextPixel;
-            case "level":
-                return this.level;
-            case "exp":
-                return this.exp;
-            case "playedtime":
-                return getPlayedTime();
-            default:
-                return 0;
-        }
+        return switch (name.toLowerCase()) {
+            case "painted" -> this.painted;
+            case "nextpixel" -> this.nextPixel;
+            case "level" -> this.level;
+            case "exp" -> this.exp;
+            case "playedtime" -> getPlayedTime();
+            default -> 0;
+        };
     }
 }

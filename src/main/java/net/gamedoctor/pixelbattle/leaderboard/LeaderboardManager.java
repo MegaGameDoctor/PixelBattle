@@ -54,18 +54,11 @@ public class LeaderboardManager {
         HashMap<String, Integer> values = plugin.getDatabaseManager().getSortedForLeaderboard(leaderboard.getValue(), leaderboard.getRows(), leaderboard.getValueType());
 
         for (String player : values.keySet()) {
-            String resultValue;
-            switch (leaderboard.getValueType()) {
-                case INT:
-                    resultValue = String.valueOf(values.get(player));
-                    break;
-                case TIME:
-                    resultValue = plugin.getUtils().getTimeString(values.get(player) * 1000L);
-                    break;
-                default:
-                    resultValue = "NONE";
-                    break;
-            }
+            String resultValue = switch (leaderboard.getValueType()) {
+                case INT -> String.valueOf(values.get(player));
+                case TIME -> plugin.getUtils().getTimeString(values.get(player) * 1000L);
+                default -> "NONE";
+            };
             num++;
             lines.add(leaderboard.getFormat()
                     .replace("%player%", player)

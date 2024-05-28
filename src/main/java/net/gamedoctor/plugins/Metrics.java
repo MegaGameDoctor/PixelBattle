@@ -14,24 +14,21 @@ import java.util.logging.Level;
 public class Metrics {
 
     public static void send(Plugin plugin) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    String nowVersion = plugin.getDescription().getVersion();
-                    URL url = new URL("https://spigot.kosfarix.ru/plugins/metrics/v2/send.php" + getMetricsArgs(plugin, nowVersion));
-                    URLConnection conn = url.openConnection();
-                    try (BufferedReader in = new BufferedReader(
-                            new InputStreamReader(conn.getInputStream()))) {
-                        String version = in.readLine().trim();
-                        if (!version.equalsIgnoreCase(nowVersion)) {
-                            plugin.getLogger().log(Level.WARNING, "A new version has been detected! (" + version + " > " + nowVersion + ")");
-                            plugin.getLogger().log(Level.WARNING, "Download it from SpigotMC: https://www.spigotmc.org/members/gamedoctor.792259");
-                        }
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            try {
+                String nowVersion = plugin.getDescription().getVersion();
+                URL url = new URL("https://spigot.kosfarix.ru/plugins/metrics/v2/send.php" + getMetricsArgs(plugin, nowVersion));
+                URLConnection conn = url.openConnection();
+                try (BufferedReader in = new BufferedReader(
+                        new InputStreamReader(conn.getInputStream()))) {
+                    String version = in.readLine().trim();
+                    if (!version.equalsIgnoreCase(nowVersion)) {
+                        plugin.getLogger().log(Level.WARNING, "A new version has been detected! (" + version + " > " + nowVersion + ")");
+                        plugin.getLogger().log(Level.WARNING, "Download it from SpigotMC: https://www.spigotmc.org/members/gamedoctor.792259");
                     }
-                } catch (Exception ignored) {
-                    plugin.getLogger().log(Level.SEVERE, "Couldn't check the plugin version");
                 }
+            } catch (Exception ignored) {
+                plugin.getLogger().log(Level.SEVERE, "Couldn't check the plugin version");
             }
         });
     }

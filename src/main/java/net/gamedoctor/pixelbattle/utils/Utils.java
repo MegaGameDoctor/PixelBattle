@@ -26,7 +26,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class Utils {
@@ -53,13 +52,16 @@ public class Utils {
     public ItemStack makeItem(Material material, String name, LinkedList<String> lore, boolean glowing) {
         ItemStack itemStack = new ItemStack(material);
         ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.setLore(lore);
-        itemMeta.setDisplayName(name);
-        if (glowing) {
-            itemMeta.addEnchant(Enchantment.MENDING, 1, true);
-            itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        if (itemMeta != null) {
+            itemMeta.setLore(lore);
+            itemMeta.setDisplayName(name);
+
+            if (glowing) {
+                itemMeta.addEnchant(Enchantment.MENDING, 1, true);
+                itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            }
+            itemStack.setItemMeta(itemMeta);
         }
-        itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
 
@@ -164,7 +166,7 @@ public class Utils {
 
         int defaultCooldown = plugin.getMainConfig().getLevelingConfig().getLevelData(pixelPlayer.getLevel()).getPaintCooldown();
 
-        List<PermissionAttachmentInfo> perms = pixelPlayer.getBukkitPlayer().getEffectivePermissions().stream().filter(PermissionAttachmentInfo::getValue).filter((x) -> x.getPermission().startsWith(permPrefix)).collect(Collectors.toList());
+        List<PermissionAttachmentInfo> perms = pixelPlayer.getBukkitPlayer().getEffectivePermissions().stream().filter(PermissionAttachmentInfo::getValue).filter((x) -> x.getPermission().startsWith(permPrefix)).toList();
         if (perms.isEmpty()) return defaultCooldown;
 
         AtomicInteger maxVal = new AtomicInteger(0);

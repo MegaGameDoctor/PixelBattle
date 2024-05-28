@@ -14,7 +14,8 @@ public class WorldLoadListener implements Listener {
 
     @EventHandler
     public void onWorldLoad(WorldLoadEvent e) {
-        if (plugin.getConfig().getString("canvas.world").equalsIgnoreCase(e.getWorld().getName())) {
+        String world = plugin.getConfig().getString("canvas.world");
+        if (world != null && world.equalsIgnoreCase(e.getWorld().getName())) {
             e.getHandlers().unregister(this);
             plugin.getLogger().log(Level.INFO, "The world is loaded! Launching the plugin...");
             plugin.preparePlugin();

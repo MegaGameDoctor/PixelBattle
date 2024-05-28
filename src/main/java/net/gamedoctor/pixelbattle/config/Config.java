@@ -113,7 +113,7 @@ public class Config {
         blockModify = cfg.getBoolean("settings.blockModify");
         noFall = cfg.getBoolean("settings.noFall");
         preventBlockInteract = cfg.getBoolean("settings.preventBlockInteract");
-        defaultGamemode = cfg.getString("settings.defaultGamemode").toUpperCase();
+        defaultGamemode = cfg.getString("settings.defaultGamemode", "ADVENTURE").toUpperCase();
         standaloneServerConfig = new StandaloneServerConfig(plugin);
         gui_colorSelectionTitle = utils.color(cfg.getString("gui.colorSelectionTitle"));
         gui_paintLogsTitle = utils.color(cfg.getString("gui.paintLogsTitle"));
@@ -136,9 +136,9 @@ public class Config {
             leaderboards.put(value, new Leaderboard(plugin, value));
         }
 
-        World world = Bukkit.getWorld(cfg.getString("canvas.world"));
-        spawn = new Location(world, cfg.getDouble("canvas.spawn.x"), cfg.getDouble("canvas.spawn.y"), cfg.getDouble("canvas.spawn.z"), Float.parseFloat(cfg.getString("canvas.spawn.yaw")), Float.parseFloat(cfg.getString("canvas.spawn.pitch")));
-        exitSpawn = new Location(world, cfg.getDouble("canvas.exitSpawn.x"), cfg.getDouble("canvas.exitSpawn.y"), cfg.getDouble("canvas.exitSpawn.z"), Float.parseFloat(cfg.getString("canvas.exitSpawn.yaw")), Float.parseFloat(cfg.getString("canvas.exitSpawn.pitch")));
+        World world = Bukkit.getWorld(cfg.getString("canvas.world", "world"));
+        spawn = new Location(world, cfg.getDouble("canvas.spawn.x"), cfg.getDouble("canvas.spawn.y"), cfg.getDouble("canvas.spawn.z"), Float.parseFloat(cfg.getString("canvas.spawn.yaw", "0")), Float.parseFloat(cfg.getString("canvas.spawn.pitch", "0")));
+        exitSpawn = new Location(world, cfg.getDouble("canvas.exitSpawn.x"), cfg.getDouble("canvas.exitSpawn.y"), cfg.getDouble("canvas.exitSpawn.z"), Float.parseFloat(cfg.getString("canvas.exitSpawn.yaw", "0")), Float.parseFloat(cfg.getString("canvas.exitSpawn.pitch", "0")));
 
         LocationsCuboid canvasCuboid = new LocationsCuboid(
                 new Location(world, cfg.getDouble("canvas.posOne.x"), cfg.getDouble("canvas.posOne.y"), cfg.getDouble("canvas.posOne.z")),
@@ -170,7 +170,7 @@ public class Config {
             items.put(Material.getMaterial(material.toUpperCase()), new ColorItem(plugin, material, defaultLore));
         }
 
-        defaultColor = items.get(Material.getMaterial(cfg.getString("settings.defaultColor").toUpperCase()));
+        defaultColor = items.get(Material.getMaterial(cfg.getString("settings.defaultColor", "WHITE_WOOL").toUpperCase()));
         /*
         for (int i = 0; i < 500; i++) {
             Material random = Material.values()[new Random().nextInt(Material.values().length)];
@@ -230,7 +230,7 @@ public class Config {
                 }
             }
             exitItemSlot = cfg.getInt("exitItem.slot");
-            exitItem = utils.makeItem(Material.getMaterial(cfg.getString("exitItem.material")), utils.color(cfg.getString("exitItem.name")), lore, cfg.getBoolean("exitItem.glowing"));
+            exitItem = utils.makeItem(Material.getMaterial(cfg.getString("exitItem.material", "BARRIER")), utils.color(cfg.getString("exitItem.name")), lore, cfg.getBoolean("exitItem.glowing"));
         } else {
             exitItemSlot = 0;
             exitItem = null;

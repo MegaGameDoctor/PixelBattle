@@ -38,8 +38,8 @@ public class Leaderboard {
             this.format = utils.color(cfg.getString(path + "format"));
             this.emptyFormat = utils.color(cfg.getString(path + "emptyFormat"));
             this.updateDelay = cfg.getInt(path + "updateDelay");
-            this.location = new Location(Bukkit.getWorld(cfg.getString(path + "location.world")), cfg.getDouble(path + "location.x"), cfg.getDouble(path + "location.y"), cfg.getDouble(path + "location.z"));
-            this.valueType = ValueType.valueOf(cfg.getString(path + "valueType").toUpperCase());
+            this.location = new Location(Bukkit.getWorld(cfg.getString(path + "location.world", "world")), cfg.getDouble(path + "location.x"), cfg.getDouble(path + "location.y"), cfg.getDouble(path + "location.z"));
+            this.valueType = ValueType.valueOf(cfg.getString(path + "valueType", ValueType.INT.toString()).toUpperCase());
         }
     }
 }

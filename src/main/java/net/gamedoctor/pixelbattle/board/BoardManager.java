@@ -9,10 +9,7 @@ import net.gamedoctor.pixelbattle.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
+import org.bukkit.scoreboard.*;
 
 public class BoardManager {
     private final PixelBattle plugin;
@@ -41,7 +38,7 @@ public class BoardManager {
     public void setScoreboard(Player player) {
         BoardConfig boardConfig = plugin.getMainConfig().getBoardConfig();
         Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
-        Objective obj = board.registerNewObjective(prefix, "dummy", boardConfig.getName());
+        Objective obj = board.registerNewObjective(prefix, Criteria.DUMMY, boardConfig.getName());
         obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         int lineCounter = boardConfig.getLines().size();

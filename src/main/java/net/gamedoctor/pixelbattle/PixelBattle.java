@@ -201,8 +201,8 @@ public class PixelBattle extends JavaPlugin {
                 for (int frame : frames.keySet()) {
                     try {
                         Thread.sleep(speed);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
                     }
 
                     CanvasFrame canvasFrame = frames.get(frame);
