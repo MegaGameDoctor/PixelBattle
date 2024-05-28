@@ -1,0 +1,16 @@
+name: PixelBattle
+main: net.gamedoctor.pixelbattle.PixelBattle
+version: "2.0"
+api-version: "1.16"
+load: STARTUP
+author: _GameDoctor_
+description: "PixelBattle game"
+website: vk.com/ep_pkp
+softdepend: [ PlaceholderAPI ]
+
+commands:
+  pixelbattle:
+    description: Main PixelBattle Command
+    aliases:
+      - pb
+    usage: /<command>

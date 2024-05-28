@@ -1,0 +1,729 @@
+#############################
+#        PixelBattle        #
+#     Made by GameDoctor    #
+#           2024            #
+#############################
+
+# All instructions for using and configuring the plugin are provided on SpigotMC:
+# https://www.spigotmc.org/members/gamedoctor.792259
+
+settings: # General settings
+  # The prefix of all messages in the chat. You can leave it empty
+  messagesPrefix: "&fPixelBattle &e> "
+  # The number of seconds until the next painting
+  paintCooldown: 10
+  # The beginning of the right, in which you can specify the delay for the next painting. For example, pixelbattle.cooldown.5 - Sets the delay to the player for 5 seconds. Integers only
+  cooldownPermission: "pixelbattle.cooldown."
+  # Clears inventory, restores hunger, health, and resets the player's level
+  resetPlayer: false
+  # Protect the player from damage, disable PvP, prohibit interaction with inventory
+  guardPlayer: true
+  # Allows players to hit each other without causing damage
+  allowKnock: false
+  # Prevents players from falling out of the world
+  noFall: false
+  # Enables flight mode for everyone who is on PixelBattle
+  enableFly: true
+  # If false, the blocks cannot be broken or placed everywhere. If true, the blocks can be broken or placed everywhere except on the canvas
+  blockModify: false
+  # Prohibit players from interacting with chests, stoves, workbenches and other blocks
+  preventBlockInteract: false
+  # The standard game mode when entering PixelBattle (NO = DO NOT CHANGE)
+  defaultGamemode: "NO"
+  # Time display in format MM:SS (Minutes:Seconds). When false, just seconds are displayed
+  timeFormat: false
+  # Whether to log the installation of each pixel (It is necessary to create a TimeLapse)
+  logPixelPaint: true
+  # Whether to save the current state of the canvas in the database. (Required to be able to export .png and timelapse images to .mp4)
+  # To use this function, the canvas must be horizontal, without changing the height and with equal sides. For example: 11x11, 100x100, 123x123 and so on
+  saveCanvasState: true
+  # If true, the players will not be able to paint over the block with the same color
+  preventPaintSame: false
+  # The standard color of the canvas
+  defaultColor: "WHITE_WOOL"
+  # If true, when painting over, this block will be taken away from the previous one who painted over. The level and amount of experience will not be affected
+  removePixelsWhenPainted: false
+  # Time format per line
+  timeStringFormat:
+    # If true, only the largest is displayed. For example, not 1 d. 12 h. 5 m. 13 s., but just 1 d.
+    displayOnlyHighest: true
+    seconds: "s."
+    minutes: "m."
+    hours: "h."
+    days: "d."
+
+canvas: # Canvas settings
+  world: "world"
+  # The place where players will appear after logging into PixelBattle
+  spawn:
+    x: 1
+    y: 1
+    z: 1
+    yaw: 1
+    pitch: 1
+  # The place where players will appear when exiting PixelBattle
+  exitSpawn:
+    x: 1
+    y: 1
+    z: 1
+    yaw: 1
+    pitch: 1
+  # The first point of the canvas
+  posOne:
+    x: 1
+    y: 1
+    z: 1
+  # The second point of the canvas
+  posTwo:
+    x: 1
+    y: 1
+    z: 1
+
+database: # Database settings
+  # Available types: FILE, MYSQL, SQLITE
+  type: SQLITE
+  # It is specified without a format. Used for FILE (.yml) and SQLITE (.db)
+  fileName: "database"
+  # The name of the table with the players. Used for FILE, MYSQL, and SQLITE types
+  playersTableName: "pb_players"
+  # The name of the table with the logs of the shaded pixels. Used for FILE, MYSQL, and SQLITE types
+  pixelLogsTableName: "pb_pixelLogs"
+  # The name of the table with the current state of the canvas. Used for FILE, MYSQL, and SQLITE types
+  canvasStateTableName: "pb_canvasState"
+  # The name of the database. Only for MYSQL
+  databaseName: "pixelbattle"
+  # The host. Only for MYSQL
+  host: "localhost"
+  # User. Only for MYSQL
+  user: "root"
+  # Password. Only for MYSQL
+  password: "-"
+  # Additional connection parameters. Change it if you know what it's for. Only for MYSQL
+  arguments: "?useUnicode=true&characterEncoding=utf8&autoReconnect=true&useSSL=false"
+
+command: # Main command settings /pixelbattle
+  join: # The name of the subcommand. Do not change
+    # The right to enter PixelBattle through the /pixelbattle join command. Set to '-' if the right is not required
+    usePermission: "pixelbattle.join.use"
+    # The right to move other players to PixelBattle with the /pixelbattle join <nickname> command. Set to '-' if the right is not required
+    useOnOtherPermission: "pixelbattle.join.use.other"
+  leave: # The name of the subcommand. Do not change
+    # The right to exit PixelBattle via the /pixelbattle leave command. Set to '-' if the right is not required
+    usePermission: "pixelbattle.leave.use"
+    # The right to throw other players out of PixelBattle with the /pixelbattle leave <nickname> command. Set to '-' if the right is not required
+    useOnOtherPermission: "pixelbattle.leave.use.other"
+  timelapse: # The name of the subcommand. Do not change
+    # The right to play a TimeLapse via the /pixelbattle timelapse command. Set to '-' if the right is not required
+    usePermission: "pixelbattle.timelapse.use"
+  wipe: # The name of the subcommand. Do not change
+    # The right to reset canvas history and data via the /pixelbattle wipe command. Set to '-' if the right is not required
+    usePermission: "pixelbattle.wipe.use"
+  web: # The name of the subcommand. Do not change
+    # The right to work with the WEB Tool through the /pixelbattle web command. Set to '-' if the right is not required
+    usePermission: "pixelbattle.web.use"
+  users: # The name of the subcommand. Do not change
+    # The right to manage player data through the pixelbattle users team. Set to '-' if the right is not required
+    usePermission: "pixelbattle.users.use"
+
+standaloneServer: # Use this if PixelBattle is on a separate server. Auto-join will work
+  enable: false
+  # Setting up redirection to another server after exiting PixelBattle mode (BungeeCord)
+  redirectOnExit:
+    enable: false
+    server: "lobby"
+
+exitItem: # An item in the inventory for quick exit from PixelBattle
+  enable: true
+  # Slot in the hotbar
+  slot: 0
+  material: "COMPASS"
+  glowing: false # Makes the object shimmer when true
+  name: "&aExit"
+  lore:
+    - "&7Click if you want to leave"
+
+gui: # Setting up the color selection menu
+  # Color selection menu title
+  colorSelectionTitle: "&6&lColor selection"
+  # The title of the menu of the history of colorings
+  paintLogsTitle: "&b&lThe history of colorings &8(&b%x% %y% %z%&8)"
+  items: # You can't add your own. You can specify lore for any
+    back: # Do not change this line
+      enable: true
+      # The right to display this item. Set to '-' if not required
+      permission: "-"
+      name: "&cBack"
+      material: "OAK_SIGN"
+    next: # Do not change this line
+      enable: true
+      # The right to display this item. Set to '-' if not required
+      permission: "-"
+      name: "&cNext"
+      material: "OAK_SIGN"
+    footer: # Do not change this line
+      enable: true
+      # The right to display this item. Set to '-' if not required
+      permission: "-"
+      name: " "
+      material: "GRAY_STAINED_GLASS_PANE"
+    info: # Do not change this line
+      enable: true
+      # The right to display this item. Set to '-' if not required
+      permission: "-"
+      name: "&cInformation"
+      material: "BOOK"
+      lore: # Lore setting (Can be removed)
+        - "&7Color: %color%"
+        - "&7By player: &c%player%"
+        - "&7Repainted &e%paintedCount%&7 times"
+        - "&7Date: &e%date% (%time%)"
+        - " "
+        - "&aClick to open logs"
+    paintedPixelInfo: # Do not change this line
+      # If true, players will be able to view the history of coloring each pixel, if false, this function will be unavailable
+      enable: true
+      # The right to display this item. Set to '-' if not required
+      permission: "-"
+      name: "%colorName%"
+      lore: # Lore setting (Can be removed)
+        - "&7By player: &c%player%"
+        - "&7Date: &e%date% (%time%)"
+    color: # Do not change this line
+      # Lore for all color items
+      defaultLore:
+        - "&7Level: &e%level%"
+        - "&7EXP: &9%exp%"
+        - "%itemLore%" # %itemLore% - Individual lore of color items
+
+leveling: # The level system
+  # If you don't need a level system, set it to false
+  enable: true
+  # If true, the experience will be added even when the level is already at its maximum
+  stillAddExpWhenMax: false
+  # The level that will be given to all new players
+  defaultLevel: 1
+  # The format for the LevelUp message (%newFeatures%)
+  format:
+    colors: "&7- New colors: %colors%"
+    cooldown: "&7- Reduced cooldown: &6%cooldown% sec."
+    empty: "&cEmpty"
+  levels: # Setting up levels
+    2: # Level number. The level numbers should go in order
+      # The delay for painting, which begins to take effect from the moment this level is reached. You can remove it
+      paintCooldown: 9
+      # The amount of experience required to reach this level
+      needExp: 10
+    3:
+      needExp: 20
+    4:
+      paintCooldown: 8
+      needExp: 30
+    5:
+      paintCooldown: 7
+      needExp: 40
+    6:
+      needExp: 50
+    7:
+      paintCooldown: 6
+      needExp: 60
+    8:
+      needExp: 70
+    9:
+      paintCooldown: 5
+      needExp: 80
+    10:
+      paintCooldown: 4
+      needExp: 100
+
+scoreboard: # Scoreboard settings
+  enable: true
+  # Header
+  name: "&a&lPixelBattle"
+  # Indicated In TICKS. (20 ticks = 1 second, 10 ticks = half a second). 0 - If you do not need to update
+  refreshTime: 15
+  lines:
+    - "&ePlayer:"
+    - "&c%player%"
+    - " "
+    - "&eLevel:"
+    - "&a%level% &7(&c%exp%&8/&a%expToNextLevel%&7)"
+    - " "
+    - "&ePainted:"
+    - "&a%painted%"
+    - " "
+    - "&eIn game:"
+    - "&a%playedTime%"
+    - " "
+    - "&eLeft: &6&l%time%"
+
+leaderboards: # Leaderboards in the form of a hologram
+  # The name of the column with numeric data (Do not touch it if you do not know how to work with it)
+  painted:
+    enable: false
+    # The data type to which the value will be converted. Either INT is a number, or TIME is the time in the string
+    valueType: INT
+    # Header
+    title:
+      - "&eLeaderboard"
+      - "&e-= &bPainted pixels &e=-"
+    # String format
+    format: "&7%num%) &a%player% &8- &c%value%"
+    # Empty string format
+    emptyFormat: "&7%num%) &cEmpty"
+    # Number of lines (Header lines are not counted)
+    rows: 5
+    # The time of the update. Specified in seconds. 0 - If no update is required
+    updateDelay: 10
+    # Location
+    location:
+      world: "world"
+      x: 1
+      y: 1
+      z: 1
+  playedTime:
+    enable: false
+    # The data type to which the value will be converted. Either INT is a number, or TIME is the time in the string
+    valueType: TIME
+    # Header
+    title:
+      - "&eLeaderboard"
+      - "&e-= &bTime in game &e=-"
+    # String format
+    format: "&7%num%) &a%player% &8- &c%value%"
+    # Empty string format
+    emptyFormat: "&7%num%) &cEmpty"
+    # Number of lines (Header lines are not counted)
+    rows: 5
+    # The time of the update. Specified in seconds. 0 - If no update is required
+    updateDelay: 10
+    # Location
+    location:
+      world: "world"
+      x: 1
+      y: 1
+      z: 1
+  level:
+    enable: false
+    # The data type to which the value will be converted. Either INT is a number, or TIME is the time in the string
+    valueType: INT
+    # Header
+    title:
+      - "&eLeaderboard"
+      - "&e-= &bGame level &e=-"
+    # String format
+    format: "&7%num%) &a%player% &8- &c%value%"
+    # Empty string format
+    emptyFormat: "&7%num%) &cEmpty"
+    # Number of lines (Header lines are not counted)
+    rows: 5
+    # The time of the update. Specified in seconds. 0 - If no update is required
+    updateDelay: 10
+    # Location
+    location:
+      world: "world"
+      x: 1
+      y: 1
+      z: 1
+
+messages: # Message settings. You can use chat, title, ActionBar, sound and broadcast in any message
+  welcome:
+    chat:
+      enable: true
+      lines:
+        - "&7Welcome to &ePixelBattle"
+    title:
+      enable: true
+      line1: "&7Welcome,"
+      line2: "&c%player%"
+      fadeIn: 20 # 1 sec
+      stay: 60 # 3 sec
+      fadeOut: 20 # 1 sec
+    actionBar:
+      enable: true
+      message: "&7Welcome to &ePixelBattle&7, &c%player%"
+    sound: # Take the names of the sounds from the site https://www.spigotmc.org/wiki/cc-sounds-list
+      enable: true
+      name: "ENTITY_PLAYER_LEVELUP"
+    broadcast:
+      enable: false
+      lines:
+        - "&7Player &e%player% &7has joined us!"
+  levelUp: # Used with leveling.enable = true
+    chat:
+      enable: true
+      lines:
+        - "&7Your level has been upgraded to &e%level%"
+        - "&7Now available:"
+        - "%newFeatures%"
+    title:
+      enable: true
+      line1: "&a&lLevel UP!"
+      # %pLevel% is the previous level. %level% - new level
+      line2: "&c%pLevel%&7->&a%level%"
+      fadeIn: 20 # 1 sec
+      stay: 60 # 3 sec
+      fadeOut: 20 # 1 sec
+    actionBar:
+      enable: false
+      message: "&7&lNew level: &e%level%"
+    sound: # Take the names of the sounds from the site https://www.spigotmc.org/wiki/cc-sounds-list
+      enable: true
+      name: "ENTITY_PLAYER_LEVELUP"
+    broadcast:
+      enable: true
+      lines:
+        - "&7Player &c%player% &7has raised his level from &c&l%pLevel% &7to &e&l%level%"
+  expReceived: # Used with leveling.enable = true
+    actionBar:
+      enable: true
+      message: "&9+%exp% EXP"
+    sound: # Take the names of the sounds from the site https://www.spigotmc.org/wiki/cc-sounds-list
+      enable: true
+      name: "ENTITY_PLAYER_LEVELUP"
+  pixelPainted:
+    chat:
+      enable: true
+      lines:
+        - "&7You have successfully painted over the block. New color: %color%"
+    title:
+      enable: true
+      line1: "&a&lSuccess"
+      line2: "&e&lYou have painted over the block"
+      fadeIn: 20 # 1 sec
+      stay: 60 # 3 sec
+      fadeOut: 20 # 1 sec
+    actionBar:
+      enable: false
+      message: "&7You have painted over the block with a color %color%"
+    sound:
+      enable: true
+      name: "ENTITY_EXPERIENCE_ORB_PICKUP"
+  pixelDelay:
+    chat:
+      enable: false
+      lines:
+        - "You will be able to paint over the block in %time%"
+    title:
+      enable: true
+      line1: " " # The first line is empty to display only the second one
+      line2: "&cLeft: &e%time%"
+      fadeIn: 0
+      stay: 60 # 3 sec
+      fadeOut: 0
+    sound:
+      enable: true
+      name: "ENTITY_ITEM_BREAK"
+  movingToServer: # Used with standaloneServer.enable = true and exitItem.enable = true
+    chat:
+      enable: true
+      lines:
+        - "&aYou will now be moved to the server &e%server%"
+  exitItemExit: # Used when logging out of the system.enable = true and standaloneServer.enable = false
+    chat:
+      enable: true
+      lines:
+        - "&aYou have successfully logged out of PixelBattle"
+  cmdNoPerm:
+    chat:
+      enable: true
+      lines:
+        - "&cYou don't have enough rights"
+    sound:
+      enable: true
+      name: "ENTITY_ITEM_BREAK"
+  cmdHelp:
+    chat:
+      enable: true
+      lines:
+        - "&e------------ &dPixelBattle &e------------"
+        - "&d/%cmd% &7join&f: Log in to PixelBattle"
+        - "&d/%cmd% &7leave&f: Exit from PixelBattle"
+        - "&d/%cmd% &7timelapse <speed>&f: Play a timelapse on the canvas"
+        - "&d/%cmd% &7wipe&f: To perform a wipe of data and history of canvas"
+        - "&d/%cmd% &7web&f: Working with a WEB Tool"
+        - "&d/%cmd% &7users&f: Player management"
+  cmdWebHelp:
+    chat:
+      enable: true
+      lines:
+        - "&e------------ &dWEB Tool &e------------"
+        - "&d/%cmd% &7web canvas&f: Create a picture of the canvas (.png)"
+        - "&d/%cmd% &7web timelapse&f: Create a PixelBattle TimeLapse (.mp4)"
+  cmdUsersHelp:
+    chat:
+      enable: true
+      lines:
+        - "&e------------ &dPlayer Management &e------------"
+        - "&d/%cmd% &7users wipe <name>&f: Reset player data"
+        - "&d/%cmd% &7users setLevel <name> <number>&f: Set the level for the player"
+        - "&d/%cmd% &7users setExp <name> <number>&f: Set the experience for the player"
+        - "&d/%cmd% &7users setPainted <name> <number>&f: Set the number of painted pixels for the player"
+  cmdNoPlayer:
+    chat:
+      enable: true
+      lines:
+        - "&cPlayer &e%target% &cnot found"
+    sound:
+      enable: true
+      name: "ENTITY_ITEM_BREAK"
+  cmdAlreadyIn:
+    chat:
+      enable: true
+      lines:
+        - "&cPlayer &e%target% &calready in PixelBattle"
+    sound:
+      enable: true
+      name: "ENTITY_ITEM_BREAK"
+  cmdNotIn:
+    chat:
+      enable: true
+      lines:
+        - "&cPlayer &e%target% &cnot in PixelBattle"
+    sound:
+      enable: true
+      name: "ENTITY_ITEM_BREAK"
+  cmdSuccess:
+    chat:
+      enable: true
+      lines:
+        - "&aSuccessfully"
+  cmdIncorrect:
+    chat:
+      enable: true
+      lines:
+        - "&cThe data is incorrectly specified"
+  timelapseStarting:
+    chat:
+      enable: true
+      lines:
+        - "&aThe preparation of the TimeLapse has begun. Speed: &e%speed%"
+  timelapseStarted:
+    chat:
+      enable: true
+      lines:
+        - "&aThe TimeLapse playback has started. Frames: &e%frames%&a, approximate duration: &b%time%"
+    broadcast:
+      enable: true
+      lines:
+        - "&aPlayer &e%player% &ahas started playing the TimeLapse! Approximate Duration: &b%time%"
+  timelapseEnded:
+    chat:
+      enable: true
+      lines:
+        - "&aThe TimeLapse playback is completed, the canvas is up to date"
+  timelapseAction:
+    chat:
+      enable: true
+      lines:
+        - "&cYou cannot do this while the TimeLapse playback is active"
+  timelapseFrameCounter:
+    actionBar:
+      enable: true
+      message: "&7Frame: &c%current%&7/&a%all%"
+  preventedSameColor: # Used when preventPaintSame = true
+    chat:
+      enable: true
+      lines:
+        - "&cYou cannot fill the block with the same color (%color%&c)"
+    sound:
+      enable: true
+      name: "ENTITY_ITEM_BREAK"
+  wipeStarted:
+    chat:
+      enable: true
+      lines:
+        - "&cThe wipe process has begun... Do not touch the canvas"
+  noData:
+    chat:
+      enable: true
+      lines:
+        - "&cThe necessary data is missing to perform this operation: &e%data%"
+  webRequest:
+    chat:
+      enable: true
+      lines:
+        - "&eThe request has been sent. Please wait"
+  webAnswer:
+    chat:
+      enable: true
+      lines:
+        - "&aServer response: &e%answer%"
+
+items: # Colors. You can add as many as you want. There are no limits
+  WHITE_WOOL: # Block name
+    name: "&fWhite" # The displayed name
+    # The minimum level required to use this color. You can remove it
+    needLevel: 1
+    # The amount of experience that painting with this color gives. You can remove it
+    givesExp: 1
+    permission: "-" # The right to use. If '-' - then the rights are not needed
+    glowing: false # Makes the object shimmer (Can be removed)
+    lore: # Lore setting (Can be removed)
+      - "&bYou can set the lore for each color"
+      - "&c&nOr just remove it =)"
+  ORANGE_WOOL:
+    name: "&6Orange"
+    needLevel: 2
+    givesExp: 1
+    permission: "-"
+  MAGENTA_WOOL:
+    name: "&5Magenta"
+    needLevel: 2
+    givesExp: 1
+    permission: "-"
+  LIGHT_BLUE_WOOL:
+    name: "&bLight Blue"
+    needLevel: 2
+    givesExp: 1
+    permission: "-"
+  YELLOW_WOOL:
+    name: "&eYellow"
+    needLevel: 3
+    givesExp: 2
+    permission: "-"
+  LIME_WOOL:
+    name: "&aLime"
+    needLevel: 3
+    givesExp: 2
+    permission: "-"
+  PINK_WOOL:
+    name: "&dPink"
+    needLevel: 3
+    givesExp: 2
+    permission: "-"
+  GRAY_WOOL:
+    name: "&8Gray"
+    needLevel: 3
+    givesExp: 2
+    permission: "-"
+  LIGHT_GRAY_WOOL:
+    name: "&7Light Gray"
+    needLevel: 3
+    givesExp: 2
+    permission: "-"
+  CYAN_WOOL:
+    name: "&3Cyan"
+    needLevel: 4
+    givesExp: 2
+    permission: "-"
+  PURPLE_WOOL:
+    name: "&5Purple"
+    needLevel: 4
+    givesExp: 2
+    permission: "-"
+  BLUE_WOOL:
+    name: "&1Blue"
+    needLevel: 4
+    givesExp: 2
+    permission: "-"
+  BROWN_WOOL:
+    name: "&6Brown"
+    needLevel: 5
+    givesExp: 3
+    permission: "-"
+  GREEN_WOOL:
+    name: "&2Green"
+    needLevel: 5
+    givesExp: 3
+    permission: "-"
+  RED_WOOL:
+    name: "&4Red"
+    needLevel: 6
+    givesExp: 3
+    permission: "-"
+  BLACK_WOOL:
+    name: "&0Black"
+    needLevel: 6
+    givesExp: 3
+    permission: "-"
+  GOLD_BLOCK:
+    name: "&6&lGold"
+    givesExp: 10
+    glowing: true # Makes the object shimmer (Can be removed)
+    permission: "pixelbattle.colors.gold_block"
+  DIAMOND_BLOCK:
+    name: "&b&lLight Blue"
+    givesExp: 10
+    glowing: true # Makes the object shimmer (Can be removed)
+    permission: "pixelbattle.colors.diamond_block"
+  # Concrete
+  WHITE_CONCRETE:
+    name: "&fWhite"
+    needLevel: 7
+    givesExp: 4
+    permission: "-"
+  ORANGE_CONCRETE:
+    name: "&6Orange"
+    needLevel: 7
+    givesExp: 4
+    permission: "-"
+  MAGENTA_CONCRETE:
+    name: "&dMagenta"
+    needLevel: 7
+    givesExp: 4
+    permission: "-"
+  LIGHT_BLUE_CONCRETE:
+    name: "&bLight Blue"
+    needLevel: 7
+    givesExp: 4
+    permission: "-"
+  YELLOW_CONCRETE:
+    name: "&eYellow"
+    needLevel: 7
+    givesExp: 4
+    permission: "-"
+  LIME_CONCRETE:
+    name: "&aLime"
+    needLevel: 8
+    givesExp: 4
+    permission: "-"
+  PINK_CONCRETE:
+    name: "&dPink"
+    needLevel: 8
+    givesExp: 4
+    permission: "-"
+  GRAY_CONCRETE:
+    name: "&8Gray"
+    needLevel: 8
+    givesExp: 4
+    permission: "-"
+  LIGHT_GRAY_CONCRETE:
+    name: "&7Light Gray"
+    needLevel: 8
+    givesExp: 4
+    permission: "-"
+  CYAN_CONCRETE:
+    name: "&3Cyan"
+    needLevel: 9
+    givesExp: 5
+    permission: "-"
+  PURPLE_CONCRETE:
+    name: "&5Purple"
+    needLevel: 9
+    givesExp: 5
+    permission: "-"
+  BLUE_CONCRETE:
+    name: "&1Blue"
+    needLevel: 9
+    givesExp: 5
+    permission: "-"
+  BROWN_CONCRETE:
+    name: "&6Brown"
+    needLevel: 9
+    givesExp: 5
+    permission: "-"
+  GREEN_CONCRETE:
+    name: "&2Green"
+    needLevel: 10
+    givesExp: 6
+    permission: "-"
+  RED_CONCRETE:
+    name: "&4Red"
+    needLevel: 10
+    givesExp: 6
+    permission: "-"
+  BLACK_CONCRETE:
+    name: "&0Black"
+    needLevel: 10
+    givesExp: 6
+    permission: "-"
