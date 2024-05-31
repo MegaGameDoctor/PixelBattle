@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -44,5 +45,9 @@ public class PixelBattleAPI {
 
     public HashMap<String, CanvasFrame> getAllCanvasFrames() {
         return plugin.getDatabaseManager().getCanvasPixelsData();
+    }
+
+    public LinkedHashMap<Integer, CanvasFrame> getFramesForTimeLapse() {
+        return plugin.getDatabaseManager().getFramesForTimeLapse();
     }
 }
