@@ -2,9 +2,6 @@ plugins {
     id 'java'
 }
 
-group 'net.gamedoctor.KosfaRixVKLogger'
-version '1.0'
-
 rootProject.tasks.named("jar") {
     duplicatesStrategy = 'include'
 }
