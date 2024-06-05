@@ -15,8 +15,9 @@ public class LevelingConfig {
     private final String format_colors;
     private final String format_cooldown;
     private final String format_no;
+    private final boolean removePixelsWhenPainted_removeExp;
 
-    public LevelingConfig(PixelBattle plugin) {
+    public LevelingConfig(PixelBattle plugin, boolean removePixelsWhenPainted) {
         String path = "leveling.";
         FileConfiguration cfg = plugin.getConfig();
         Utils utils = plugin.getUtils();
@@ -33,13 +34,21 @@ public class LevelingConfig {
                 lastPaintCooldown = cfg.getInt(levelPath + "paintCooldown", lastPaintCooldown);
                 levelToExp.put(Integer.parseInt(level), new Level(cfg.getInt(levelPath + "needExp"), lastPaintCooldown));
             }
+
             levelToExp.put(defaultLevel, new Level(0, cfg.getInt("settings.paintCooldown")));
+
+            if (removePixelsWhenPainted) {
+                removePixelsWhenPainted_removeExp = cfg.getBoolean("settings.removePixelsWhenPainted.removeExp", false);
+            } else {
+                removePixelsWhenPainted_removeExp = false;
+            }
         } else {
             format_colors = "";
             format_cooldown = "";
             format_no = "";
             defaultLevel = 0;
             stillAddExpWhenMax = false;
+            removePixelsWhenPainted_removeExp = false;
             levelToExp.put(defaultLevel, new Level(0, cfg.getInt("settings.paintCooldown")));
         }
     }

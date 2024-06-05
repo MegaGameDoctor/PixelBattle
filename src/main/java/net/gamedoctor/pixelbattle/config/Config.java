@@ -49,7 +49,7 @@ public class Config {
     private final boolean noFall;
     private final boolean preventBlockInteract;
     private final String cooldownPermission;
-    private final boolean removePixelsWhenPainted;
+    private final boolean removePixelsWhenPainted_enable;
 
     private final boolean timeStringFormat_displayOnlyHighest;
     private final String timeStringFormat_seconds;
@@ -83,6 +83,8 @@ public class Config {
     private final Message message_expReceived;
     private final Message message_cmdUsersHelp;
     private final Message message_cmdIncorrect;
+    private final Message message_expLost;
+    private final Message message_levelDown;
     private final ItemStack exitItem;
     private final int exitItemSlot;
     private final String command_join_usePermission;
@@ -105,28 +107,28 @@ public class Config {
         FileConfiguration cfg = plugin.getConfig();
         Utils utils = plugin.getUtils();
 
-        paintCooldown = cfg.getInt("settings.paintCooldown");
-        resetPlayer = cfg.getBoolean("settings.resetPlayer");
-        guardPlayer = cfg.getBoolean("settings.guardPlayer");
-        allowKnock = cfg.getBoolean("settings.allowKnock");
-        enableFly = cfg.getBoolean("settings.enableFly");
-        blockModify = cfg.getBoolean("settings.blockModify");
-        noFall = cfg.getBoolean("settings.noFall");
-        preventBlockInteract = cfg.getBoolean("settings.preventBlockInteract");
+        paintCooldown = cfg.getInt("settings.paintCooldown", 10);
+        resetPlayer = cfg.getBoolean("settings.resetPlayer", false);
+        guardPlayer = cfg.getBoolean("settings.guardPlayer", true);
+        allowKnock = cfg.getBoolean("settings.allowKnock", false);
+        enableFly = cfg.getBoolean("settings.enableFly", true);
+        blockModify = cfg.getBoolean("settings.blockModify", false);
+        noFall = cfg.getBoolean("settings.noFall", false);
+        preventBlockInteract = cfg.getBoolean("settings.preventBlockInteract", false);
         defaultGamemode = cfg.getString("settings.defaultGamemode", "ADVENTURE").toUpperCase();
+        removePixelsWhenPainted_enable = cfg.getBoolean("settings.removePixelsWhenPainted.enable", false);
         standaloneServerConfig = new StandaloneServerConfig(plugin);
         gui_colorSelectionTitle = utils.color(cfg.getString("gui.colorSelectionTitle"));
         gui_paintLogsTitle = utils.color(cfg.getString("gui.paintLogsTitle"));
         timeFormat = cfg.getBoolean("settings.timeFormat");
         boardConfig = new BoardConfig(plugin);
-        levelingConfig = new LevelingConfig(plugin);
-        logPixelPaint = cfg.getBoolean("settings.logPixelPaint");
-        saveCanvasState = cfg.getBoolean("settings.saveCanvasState");
-        preventPaintSame = cfg.getBoolean("settings.preventPaintSame");
+        levelingConfig = new LevelingConfig(plugin, removePixelsWhenPainted_enable);
+        logPixelPaint = cfg.getBoolean("settings.logPixelPaint", true);
+        saveCanvasState = cfg.getBoolean("settings.saveCanvasState", true);
+        preventPaintSame = cfg.getBoolean("settings.preventPaintSame", false);
         cooldownPermission = cfg.getString("settings.cooldownPermission");
-        removePixelsWhenPainted = cfg.getBoolean("settings.removePixelsWhenPainted");
 
-        timeStringFormat_displayOnlyHighest = cfg.getBoolean("settings.timeStringFormat.displayOnlyHighest");
+        timeStringFormat_displayOnlyHighest = cfg.getBoolean("settings.timeStringFormat.displayOnlyHighest", true);
         timeStringFormat_seconds = cfg.getString("settings.timeStringFormat.seconds");
         timeStringFormat_minutes = cfg.getString("settings.timeStringFormat.minutes");
         timeStringFormat_hours = cfg.getString("settings.timeStringFormat.hours");
@@ -206,6 +208,8 @@ public class Config {
         message_expReceived = new Message(plugin, "expReceived");
         message_cmdUsersHelp = new Message(plugin, "cmdUsersHelp");
         message_cmdIncorrect = new Message(plugin, "cmdIncorrect");
+        message_expLost = new Message(plugin, "expLost");
+        message_levelDown = new Message(plugin, "levelDown");
 
         command_join_usePermission = cfg.getString("command.join.usePermission");
         command_join_useOnOtherPermission = cfg.getString("command.join.useOnOtherPermission");

@@ -97,7 +97,7 @@ public class PixelBattleCommand implements CommandExecutor, TabExecutor {
                             if (!plugin.isActiveTimeLapse()) {
                                 long speed = 8;
 
-                                if (args.length > 1 && utils.isNumber(args[1])) {
+                                if (args.length > 1 && utils.isNumber(args[1], true)) {
                                     speed = Long.parseLong(args[1]);
                                 }
 
@@ -205,7 +205,7 @@ public class PixelBattleCommand implements CommandExecutor, TabExecutor {
                                             break;
                                         case "setlevel":
                                             if (args.length > 3) {
-                                                if (utils.isNumber(args[3]) && Integer.parseInt(args[3]) > 0) {
+                                                if (utils.isNumber(args[3], true) && Integer.parseInt(args[3]) > 0) {
                                                     int amount = Integer.parseInt(args[3]);
                                                     plugin.getDatabaseManager().getPlayer(args[2]).setLevel(amount);
                                                     plugin.getDatabaseManager().savePlayerWithOnlineCheck(args[2]);
@@ -219,7 +219,7 @@ public class PixelBattleCommand implements CommandExecutor, TabExecutor {
                                             break;
                                         case "setexp":
                                             if (args.length > 3) {
-                                                if (utils.isNumber(args[3]) && Integer.parseInt(args[3]) >= 0) {
+                                                if (utils.isNumber(args[3], true) && Integer.parseInt(args[3]) >= 0) {
                                                     int amount = Integer.parseInt(args[3]);
                                                     plugin.getDatabaseManager().getPlayer(args[2]).setExp(amount);
                                                     plugin.getDatabaseManager().savePlayerWithOnlineCheck(args[2]);
@@ -233,7 +233,7 @@ public class PixelBattleCommand implements CommandExecutor, TabExecutor {
                                             break;
                                         case "setpainted":
                                             if (args.length > 3) {
-                                                if (utils.isNumber(args[3]) && Integer.parseInt(args[3]) >= 0) {
+                                                if (utils.isNumber(args[3], true) && Integer.parseInt(args[3]) >= 0) {
                                                     int amount = Integer.parseInt(args[3]);
                                                     plugin.getDatabaseManager().getPlayer(args[2]).setPainted(amount);
                                                     plugin.getDatabaseManager().savePlayerWithOnlineCheck(args[2]);

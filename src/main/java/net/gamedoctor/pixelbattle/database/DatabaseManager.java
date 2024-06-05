@@ -202,6 +202,9 @@ public class DatabaseManager {
                     public void run() {
                         PixelPlayer pixelPlayer = getPlayer(pixel.getPlayer());
                         pixelPlayer.removePainted();
+                        if (plugin.getMainConfig().getLevelingConfig().isRemovePixelsWhenPainted_removeExp()) {
+                            pixelPlayer.removeExp(pixel.getColor().getGivesExp());
+                        }
                         savePlayerWithOnlineCheck(pixel.getPlayer());
                     }
                 });
@@ -210,7 +213,7 @@ public class DatabaseManager {
     }
 
     public void logPixelPaint(Location location, Material newColor, Material previousColor, String player) {
-        addTooPaintedPixelsList(location, new PaintedPixel(plugin.getMainConfig().getItems().get(newColor), player, System.currentTimeMillis()));
+        addToPaintedPixelsList(location, new PaintedPixel(plugin.getMainConfig().getItems().get(newColor), player, System.currentTimeMillis()));
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
@@ -220,7 +223,7 @@ public class DatabaseManager {
         });
     }
 
-    private void addTooPaintedPixelsList(Location location, PaintedPixel paintedPixel) {
+    private void addToPaintedPixelsList(Location location, PaintedPixel paintedPixel) {
         LinkedList<PaintedPixel> list = new LinkedList<>();
         if (paintedPixels.containsKey(location)) {
             list = paintedPixels.get(location);
@@ -295,7 +298,7 @@ public class DatabaseManager {
         for (CanvasFrame canvasFrame : dbManager.getAllPixelFrames(true).values()) {
             PaintedPixel pixelData = canvasFrame.getPixelData();
             //paintedPixels.put(canvasFrame.getLocation(), new PaintedPixel(pixelData.getColor(), pixelData.getPlayer(), pixelData.getDate()));
-            addTooPaintedPixelsList(canvasFrame.getLocation(), new PaintedPixel(pixelData.getColor(), pixelData.getPlayer(), pixelData.getDate()));
+            addToPaintedPixelsList(canvasFrame.getLocation(), new PaintedPixel(pixelData.getColor(), pixelData.getPlayer(), pixelData.getDate()));
         }
     }
 

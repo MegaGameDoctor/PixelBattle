@@ -41,8 +41,11 @@ settings: # General settings
   preventPaintSame: false
   # The standard color of the canvas
   defaultColor: "WHITE_WOOL"
-  # If true, when painting over, this block will be taken away from the previous one who painted over. The level and amount of experience will not be affected
-  removePixelsWhenPainted: false
+  # If true, when painting over, this block will be taken away from the previous one who painted over
+  removePixelsWhenPainted:
+    enable: false
+    # If true, experience will also be taken away for the block, the level can also be lowered
+    removeExp: true
   # Time format per line
   timeStringFormat:
     # If true, only the largest is displayed. For example, not 1 d. 12 h. 5 m. 13 s., but just 1 d.
@@ -373,6 +376,29 @@ messages: # Message settings. You can use chat, title, ActionBar, sound and broa
       enable: true
       lines:
         - "&7Player &c%player% &7has raised his level from &c&l%pLevel% &7to &e&l%level%"
+  levelDown: # Used with leveling.enable = true
+    chat:
+      enable: true
+      lines:
+        - "&7Your level has been lowered to &c%level%"
+    title:
+      enable: true
+      line1: "&c&lLevel is lowered..."
+      # %pLevel% is the previous level. %level% - new level
+      line2: "&a%pLevel%&7->&c%level%"
+      fadeIn: 20 # 1 sec
+      stay: 60 # 3 sec
+      fadeOut: 20 # 1 sec
+    actionBar:
+      enable: false
+      message: "&7&lNew level: &c%level%"
+    sound: # Take the names of the sounds from the site https://www.spigotmc.org/wiki/cc-sounds-list
+      enable: true
+      name: "BLOCK_ANVIL_BREAK"
+    broadcast:
+      enable: true
+      lines:
+        - "&7Player level &c%player% &7is lowered from &a&l%pLevel% &7to &c&l%level%"
   expReceived: # Used with leveling.enable = true
     actionBar:
       enable: true
@@ -380,6 +406,13 @@ messages: # Message settings. You can use chat, title, ActionBar, sound and broa
     sound: # Take the names of the sounds from the site https://www.spigotmc.org/wiki/cc-sounds-list
       enable: true
       name: "ENTITY_PLAYER_LEVELUP"
+  expLost: # Used with leveling.enable = true
+    actionBar:
+      enable: true
+      message: "&c-%exp% EXP"
+    sound: # Take the names of the sounds from the site https://www.spigotmc.org/wiki/cc-sounds-list
+      enable: true
+      name: "BLOCK_ANVIL_BREAK"
   pixelPainted:
     chat:
       enable: true
@@ -507,7 +540,7 @@ messages: # Message settings. You can use chat, title, ActionBar, sound and broa
       lines:
         - "&aPlayer &e%player% &ahas started playing the TimeLapse! Approximate Duration: &b%time%"
   timelapseEnded:
-    chat:
+    broadcast:
       enable: true
       lines:
         - "&aThe TimeLapse playback is completed, the canvas is up to date"

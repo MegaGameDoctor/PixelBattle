@@ -105,7 +105,7 @@ public class Events implements Listener {
 
                         PaintedPixel previousPixelData = plugin.getDatabaseManager().getPixelData(chooseColorGUI.getClickedBlockLocation());
 
-                        if (plugin.getMainConfig().isRemovePixelsWhenPainted()) {
+                        if (cfg.isRemovePixelsWhenPainted_enable()) {
                             plugin.getDatabaseManager().checkRemovePixelPainted(player.getName(), chooseColorGUI.getClickedBlockLocation());
                         }
 

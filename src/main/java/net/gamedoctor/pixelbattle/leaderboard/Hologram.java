@@ -49,6 +49,10 @@ public class Hologram {
     }
 
     public void clearLocation() {
+        if (!location.getChunk().isLoaded()) {
+            location.getChunk().load();
+        }
+
         int radius = this.lines.size();
         for (UUID armorStand : entitylist) {
             ArmorStand ar = (ArmorStand) Bukkit.getEntity(armorStand);
@@ -57,7 +61,7 @@ public class Hologram {
             }
         }
 
-        Collection<Entity> entities = Objects.requireNonNull(this.location.getWorld()).getNearbyEntities(this.location, 0, radius, 0);
+        Collection<Entity> entities = Objects.requireNonNull(this.location.getWorld()).getNearbyEntities(this.location, 1, radius, 1);
         for (Entity en : entities) {
             if (en instanceof ArmorStand) {
                 en.remove();

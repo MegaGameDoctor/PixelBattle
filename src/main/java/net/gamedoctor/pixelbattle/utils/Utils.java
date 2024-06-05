@@ -152,9 +152,13 @@ public class Utils {
         return colors;
     }
 
-    public boolean isNumber(String number) {
+    public boolean isNumber(String number, boolean onlyInt) {
         try {
-            Double.parseDouble(number);
+            if (onlyInt) {
+                Long.parseLong(number);
+            } else {
+                Double.parseDouble(number);
+            }
             return true;
         } catch (NumberFormatException ignored) {
             return false;

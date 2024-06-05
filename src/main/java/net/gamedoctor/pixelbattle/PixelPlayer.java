@@ -3,7 +3,8 @@ package net.gamedoctor.pixelbattle;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import net.gamedoctor.pixelbattle.api.callEvents.PixelPlayerLevelUpEvent;
+import net.gamedoctor.pixelbattle.api.callEvents.PixelPlayerLevelChangeEvent;
+import net.gamedoctor.pixelbattle.api.enums.LevelChangeType;
 import net.gamedoctor.pixelbattle.config.Config;
 import net.gamedoctor.pixelbattle.config.messages.Placeholder;
 import net.gamedoctor.pixelbattle.config.other.leveling.Level;
@@ -46,6 +47,35 @@ public class PixelPlayer {
         if (this.painted > 0) this.painted--;
     }
 
+    public void removeExp(int exp) {
+        if (exp <= 0) return;
+        Config cfg = plugin.getMainConfig();
+        int originalLevel = level;
+        int originalExp = exp;
+        while (exp > 0) {
+            exp--;
+            if (this.exp > 0) {
+                this.exp--;
+            } else {
+                if (this.level > 1) {
+                    this.level--;
+                    this.exp = plugin.getMainConfig().getLevelingConfig().getExpToNextLevel(this.level);
+                } else {
+                    exp = 0;
+                    this.exp = 0;
+                }
+            }
+        }
+
+        cfg.getMessage_expLost().display(getBukkitPlayer(), new Placeholder("%pExp%", String.valueOf(originalExp)), new Placeholder("%exp%", String.valueOf(exp)));
+
+        if (originalLevel != level) {
+            cfg.getMessage_levelDown().display(getBukkitPlayer(), new Placeholder("%pLevel%", String.valueOf(originalLevel)), new Placeholder("%level%", String.valueOf(level)));
+
+            Bukkit.getPluginManager().callEvent(new PixelPlayerLevelChangeEvent(getBukkitPlayer(), this, LevelChangeType.DOWN, originalLevel, level));
+        }
+    }
+
     public void addExp(int exp) {
         if (exp <= 0) return;
         Config cfg = plugin.getMainConfig();
@@ -80,7 +110,7 @@ public class PixelPlayer {
             }
             cfg.getMessage_levelUp().display(getBukkitPlayer(), new Placeholder("%pLevel%", String.valueOf(originalLevel)), new Placeholder("%level%", String.valueOf(level)), new Placeholder("%newFeatures%", newFeatures));
 
-            Bukkit.getPluginManager().callEvent(new PixelPlayerLevelUpEvent(getBukkitPlayer(), this, level - 1, level));
+            Bukkit.getPluginManager().callEvent(new PixelPlayerLevelChangeEvent(getBukkitPlayer(), this, LevelChangeType.UP, originalLevel, level));
         }
     }
 
