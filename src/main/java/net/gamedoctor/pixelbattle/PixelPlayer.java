@@ -12,6 +12,7 @@ import net.gamedoctor.pixelbattle.config.other.leveling.LevelingConfig;
 import net.gamedoctor.pixelbattle.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +53,7 @@ public class PixelPlayer {
         Config cfg = plugin.getMainConfig();
         int originalLevel = level;
         int originalExp = exp;
+        int previousExp = exp;
         while (exp > 0) {
             exp--;
             if (this.exp > 0) {
@@ -67,12 +69,16 @@ public class PixelPlayer {
             }
         }
 
-        cfg.getMessage_expLost().display(getBukkitPlayer(), new Placeholder("%pExp%", String.valueOf(originalExp)), new Placeholder("%exp%", String.valueOf(exp)));
+        cfg.getMessage_expLost().display(getBukkitPlayer(), new Placeholder("%pExp%", String.valueOf(previousExp)), new Placeholder("%exp%", String.valueOf(originalExp)));
 
         if (originalLevel != level) {
             cfg.getMessage_levelDown().display(getBukkitPlayer(), new Placeholder("%pLevel%", String.valueOf(originalLevel)), new Placeholder("%level%", String.valueOf(level)));
 
-            Bukkit.getPluginManager().callEvent(new PixelPlayerLevelChangeEvent(getBukkitPlayer(), this, LevelChangeType.DOWN, originalLevel, level));
+            new BukkitRunnable() {
+                public void run() {
+                    Bukkit.getPluginManager().callEvent(new PixelPlayerLevelChangeEvent(getBukkitPlayer(), PixelPlayer.this, LevelChangeType.DOWN, originalLevel, level));
+                }
+            }.runTask(plugin);
         }
     }
 

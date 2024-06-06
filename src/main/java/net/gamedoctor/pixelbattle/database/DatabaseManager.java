@@ -196,7 +196,7 @@ public class DatabaseManager {
     public void checkRemovePixelPainted(String painterName, Location location) {
         if (paintedPixels.containsKey(location)) {
             PaintedPixel pixel = paintedPixels.get(location).getLast();
-            if (!painterName.equals(pixel.getPlayer())) {
+            if (!plugin.getMainConfig().getLevelingConfig().isRemovePixelsWhenPainted_onlyOther() || !painterName.equals(pixel.getPlayer())) {
                 Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
                     @Override
                     public void run() {
