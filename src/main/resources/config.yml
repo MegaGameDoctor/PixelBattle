@@ -48,10 +48,10 @@ settings: # General settings
     removeExp: true
     # If true, the option will only apply to other players (If the player paints over his pixel, he will not lose experience)
     onlyOther: true
-  # Если true - все числа будут представлены в более коротком формате. Например: 1000 = 1K, 1000000 = 1M и так далее
+  # If true, all numbers will be presented in a shorter format. For example: 1000 = 1K, 1000000 = 1M and so on
   numberFormatting:
     enable: false
-    # Количество цифр после запятой
+    # The number of digits after the decimal point
     fractionDigits: 1
   # Time format per line
   timeStringFormat:
