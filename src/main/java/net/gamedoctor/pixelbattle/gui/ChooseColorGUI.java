@@ -90,7 +90,7 @@ public class ChooseColorGUI {
             lore.add(utils.replaceDateAndTime(line
                             .replace("%color%", paintedPixel.getColor().getName())
                             .replace("%player%", paintedPixel.getPlayer())
-                            .replace("%paintedCount%", String.valueOf(paintedCount)),
+                            .replace("%paintedCount%", utils.getFormattedNumber(paintedCount)),
                     paintedPixel.getDate()
             ));
         }

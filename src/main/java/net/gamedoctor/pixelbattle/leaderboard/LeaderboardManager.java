@@ -55,7 +55,7 @@ public class LeaderboardManager {
 
         for (String player : values.keySet()) {
             String resultValue = switch (leaderboard.getValueType()) {
-                case INT -> String.valueOf(values.get(player));
+                case INT -> plugin.getUtils().getFormattedNumber(values.get(player));
                 case TIME -> plugin.getUtils().getTimeString(values.get(player) * 1000L);
                 default -> "NONE";
             };

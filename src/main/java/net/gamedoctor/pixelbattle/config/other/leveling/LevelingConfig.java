@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 @Getter
 public class LevelingConfig {
+    private final PixelBattle plugin;
     private final int defaultLevel;
     private final boolean stillAddExpWhenMax;
     private final HashMap<Integer, Level> levelToExp = new HashMap<>();
@@ -19,6 +20,7 @@ public class LevelingConfig {
     private final boolean removePixelsWhenPainted_onlyOther;
 
     public LevelingConfig(PixelBattle plugin, boolean removePixelsWhenPainted) {
+        this.plugin = plugin;
         String path = "leveling.";
         FileConfiguration cfg = plugin.getConfig();
         Utils utils = plugin.getUtils();
@@ -79,7 +81,7 @@ public class LevelingConfig {
         if (exp == 0 && !stillAddExpWhenMax || isMaxLevel(nowLevel)) {
             return "-";
         } else {
-            return String.valueOf(exp);
+            return plugin.getUtils().getFormattedNumber(exp);
         }
     }
 }

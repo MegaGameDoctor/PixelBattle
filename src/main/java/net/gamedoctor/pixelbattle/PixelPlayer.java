@@ -83,11 +83,16 @@ public class PixelPlayer {
     }
 
     public void addExp(int exp) {
+        addExp(exp, true);
+    }
+
+    public void addExp(int exp, boolean sendMessages) {
         if (exp <= 0) return;
         Config cfg = plugin.getMainConfig();
         LevelingConfig levelingConfig = cfg.getLevelingConfig();
         if (levelingConfig.getExpToNextLevel(level) == 0 && !levelingConfig.isStillAddExpWhenMax()) return;
-        cfg.getMessage_expReceived().display(getBukkitPlayer(), new Placeholder("%pExp%", String.valueOf(this.exp)), new Placeholder("%exp%", String.valueOf(exp)));
+        if (sendMessages)
+            cfg.getMessage_expReceived().display(getBukkitPlayer(), new Placeholder("%pExp%", String.valueOf(this.exp)), new Placeholder("%exp%", String.valueOf(exp)));
         this.exp += exp;
         HashMap<Integer, Level> levelToExp = levelingConfig.getLevelToExp();
         int originalLevel = level;
@@ -114,7 +119,9 @@ public class PixelPlayer {
             if (newFeatures.isEmpty()) {
                 newFeatures = levelingConfig.getFormat_no();
             }
-            cfg.getMessage_levelUp().display(getBukkitPlayer(), new Placeholder("%pLevel%", String.valueOf(originalLevel)), new Placeholder("%level%", String.valueOf(level)), new Placeholder("%newFeatures%", newFeatures));
+
+            if (sendMessages)
+                cfg.getMessage_levelUp().display(getBukkitPlayer(), new Placeholder("%pLevel%", String.valueOf(originalLevel)), new Placeholder("%level%", String.valueOf(level)), new Placeholder("%newFeatures%", newFeatures));
 
             Bukkit.getPluginManager().callEvent(new PixelPlayerLevelChangeEvent(getBukkitPlayer(), this, LevelChangeType.UP, originalLevel, level));
         }
@@ -126,7 +133,7 @@ public class PixelPlayer {
         if (levelingConfig.getExpToNextLevel(level) == 0 && !levelingConfig.isStillAddExpWhenMax()) {
             return "-";
         } else {
-            return String.valueOf(exp);
+            return plugin.getUtils().getFormattedNumber(exp);
         }
     }
 

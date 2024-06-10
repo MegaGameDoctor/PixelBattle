@@ -18,9 +18,11 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.logging.Level;
 
 @Getter
@@ -127,6 +129,12 @@ public class Config {
         saveCanvasState = cfg.getBoolean("settings.saveCanvasState", true);
         preventPaintSame = cfg.getBoolean("settings.preventPaintSame", false);
         cooldownPermission = cfg.getString("settings.cooldownPermission");
+
+        if (cfg.getBoolean("settings.numberFormatting.enable", false)) {
+            NumberFormat numberFormat = NumberFormat.getCompactNumberInstance(Locale.US, NumberFormat.Style.SHORT);
+            numberFormat.setMinimumFractionDigits(cfg.getInt("settings.numberFormatting.fractionDigits", 1));
+            utils.setNumberFormat(numberFormat);
+        }
 
         timeStringFormat_displayOnlyHighest = cfg.getBoolean("settings.timeStringFormat.displayOnlyHighest", true);
         timeStringFormat_seconds = cfg.getString("settings.timeStringFormat.seconds");

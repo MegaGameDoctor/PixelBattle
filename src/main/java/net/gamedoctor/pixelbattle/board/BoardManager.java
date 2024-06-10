@@ -65,11 +65,11 @@ public class BoardManager {
             String suffix = boardConfig.getLines().get(boardConfig.getLines().size() - index)
                     .replace("%player%", player.getName())
                     .replace("%time%", utils.getTimeToNextPixel(player, true))
-                    .replace("%painted%", String.valueOf(pixelPlayer.getPainted()))
+                    .replace("%painted%", utils.getFormattedNumber(pixelPlayer.getPainted()))
                     .replace("%playedTime%", utils.getTimeString(pixelPlayer.getPlayedTime()))
                     .replace("%exp%", pixelPlayer.getDisplayExp())
                     .replace("%expToNextLevel%", cfg.getLevelingConfig().getDisplayExpToNextLevel(pixelPlayer.getLevel()))
-                    .replace("%level%", String.valueOf(pixelPlayer.getLevel()));
+                    .replace("%level%", utils.getFormattedNumber(pixelPlayer.getLevel()));
 
             if (cfg.isUsingPlaceholderAPI()) {
                 suffix = PlaceholderAPI.setPlaceholders(player, suffix);

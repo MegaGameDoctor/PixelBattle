@@ -2,16 +2,10 @@ package net.gamedoctor.pixelbattle.events;
 
 import lombok.RequiredArgsConstructor;
 import net.gamedoctor.pixelbattle.PixelBattle;
-import net.gamedoctor.pixelbattle.PixelPlayer;
-import net.gamedoctor.pixelbattle.api.callEvents.PixelPaintedEvent;
-import net.gamedoctor.pixelbattle.config.Config;
-import net.gamedoctor.pixelbattle.config.items.ColorItem;
 import net.gamedoctor.pixelbattle.config.messages.Placeholder;
 import net.gamedoctor.pixelbattle.config.other.StandaloneServerConfig;
-import net.gamedoctor.pixelbattle.database.data.PaintedPixel;
 import net.gamedoctor.pixelbattle.gui.ChooseColorGUI;
 import net.gamedoctor.pixelbattle.gui.PaintLogsGUI;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -86,39 +80,9 @@ public class Events implements Listener {
                 } else if (event.getSlot() == chooseColorGUI.getInvSize() - 5 && material.equals(plugin.getMainConfig().getMenu_info().getMaterial()) && plugin.getMainConfig().getMenu_paintedPixelInfo().isEnable()) {
                     plugin.getOpenedPaintLogs().put(player.getName(), new PaintLogsGUI(plugin, player, chooseColorGUI.getClickedBlockLocation()));
                 } else if (plugin.getMainConfig().getItems().containsKey(material) && event.getSlot() < 45) {
-                    Config cfg = plugin.getMainConfig();
-                    ColorItem colorItem = cfg.getItems().get(material);
                     plugin.getWaitingForChoose().remove(player.getName());
-                    Material previousColor = chooseColorGUI.getClickedBlockLocation().getBlock().getType();
-                    if (previousColor.equals(material) && cfg.isPreventPaintSame()) {
-                        cfg.getMessage_preventedSameColor().display(player, new Placeholder("%color%", colorItem.getName()));
-                        player.closeInventory();
-                    } else {
-                        chooseColorGUI.getClickedBlockLocation().getBlock().setType(material);
-                        cfg.getMessage_pixelPainted().display(player, new Placeholder("%color%", colorItem.getName()));
-                        //plugin.getNextPixelPaint().put(player.getName(), System.currentTimeMillis() + plugin.getMainConfig().getPaintDuration() * 1000L);
-                        PixelPlayer pixelPlayer = plugin.getDatabaseManager().getPlayer(player.getName());
-                        pixelPlayer.setNextPixel(System.currentTimeMillis() + plugin.getUtils().getPlayerCooldown(pixelPlayer) * 1000L);
-                        pixelPlayer.addPainted();
-                        pixelPlayer.addExp(colorItem.getGivesExp());
-                        player.closeInventory();
-
-                        PaintedPixel previousPixelData = plugin.getDatabaseManager().getPixelData(chooseColorGUI.getClickedBlockLocation());
-
-                        if (cfg.isRemovePixelsWhenPainted_enable()) {
-                            plugin.getDatabaseManager().checkRemovePixelPainted(player.getName(), chooseColorGUI.getClickedBlockLocation());
-                        }
-
-                        if (cfg.isLogPixelPaint()) {
-                            plugin.getDatabaseManager().logPixelPaint(chooseColorGUI.getClickedBlockLocation(), material, previousColor, player.getName());
-                        }
-
-                        if (cfg.isSaveCanvasState()) {
-                            plugin.getDatabaseManager().updateCanvasState(chooseColorGUI.getClickedBlockLocation(), material);
-                        }
-
-                        Bukkit.getPluginManager().callEvent(new PixelPaintedEvent(player, pixelPlayer, chooseColorGUI.getClickedBlockLocation(), new PaintedPixel(colorItem, player.getName(), System.currentTimeMillis()), previousPixelData));
-                    }
+                    player.closeInventory();
+                    plugin.getUtils().paintPixel(player, material, chooseColorGUI.getClickedBlockLocation(), true, true, true, true);
                 }
                 event.setCancelled(true);
             } else if (event.getCurrentItem() != null && plugin.getOpenedPaintLogs().containsKey(player.getName()) && plugin.getOpenedPaintLogs().get(player.getName()).getInventory().equals(event.getClickedInventory())) {

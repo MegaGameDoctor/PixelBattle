@@ -3,12 +3,18 @@ package net.gamedoctor.pixelbattle.utils;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import net.gamedoctor.pixelbattle.PixelBattle;
 import net.gamedoctor.pixelbattle.PixelPlayer;
+import net.gamedoctor.pixelbattle.api.callEvents.PixelPaintedEvent;
 import net.gamedoctor.pixelbattle.config.Config;
 import net.gamedoctor.pixelbattle.config.items.ColorItem;
 import net.gamedoctor.pixelbattle.config.items.MenuItem;
+import net.gamedoctor.pixelbattle.config.messages.Placeholder;
+import net.gamedoctor.pixelbattle.database.data.PaintedPixel;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -18,6 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -30,6 +37,8 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class Utils {
     private final PixelBattle plugin;
+    @Setter
+    private NumberFormat numberFormat;
 
     public String color(String from) {
         Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
@@ -162,6 +171,54 @@ public class Utils {
             return true;
         } catch (NumberFormatException ignored) {
             return false;
+        }
+    }
+
+    public boolean paintPixel(Player player, Material material, Location blockLocation, boolean sendMessages, boolean addExp, boolean addPainted, boolean setCooldown) {
+        Config cfg = plugin.getMainConfig();
+        ColorItem colorItem = cfg.getItems().get(material);
+        //plugin.getWaitingForChoose().remove(player.getName());
+        Material previousColor = blockLocation.getBlock().getType();
+        if (previousColor.equals(material) && cfg.isPreventPaintSame()) {
+            if (sendMessages)
+                cfg.getMessage_preventedSameColor().display(player, new Placeholder("%color%", colorItem.getName()));
+            //player.closeInventory();
+            return false;
+        } else {
+            blockLocation.getBlock().setType(material);
+            if (sendMessages)
+                cfg.getMessage_pixelPainted().display(player, new Placeholder("%color%", colorItem.getName()));
+            PixelPlayer pixelPlayer = plugin.getDatabaseManager().getPlayer(player.getName());
+            if (setCooldown)
+                pixelPlayer.setNextPixel(System.currentTimeMillis() + plugin.getUtils().getPlayerCooldown(pixelPlayer) * 1000L);
+            if (addPainted) pixelPlayer.addPainted();
+            if (addExp) pixelPlayer.addExp(colorItem.getGivesExp(), sendMessages);
+            //player.closeInventory();
+
+            PaintedPixel previousPixelData = plugin.getDatabaseManager().getPixelData(blockLocation);
+
+            if (cfg.isRemovePixelsWhenPainted_enable()) {
+                plugin.getDatabaseManager().checkRemovePixelPainted(player.getName(), blockLocation);
+            }
+
+            if (cfg.isLogPixelPaint()) {
+                plugin.getDatabaseManager().logPixelPaint(blockLocation, material, previousColor, player.getName());
+            }
+
+            if (cfg.isSaveCanvasState()) {
+                plugin.getDatabaseManager().updateCanvasState(blockLocation, material);
+            }
+
+            Bukkit.getPluginManager().callEvent(new PixelPaintedEvent(player, pixelPlayer, blockLocation, new PaintedPixel(colorItem, player.getName(), System.currentTimeMillis()), previousPixelData));
+            return true;
+        }
+    }
+
+    public String getFormattedNumber(Object number) {
+        if (numberFormat != null) {
+            return numberFormat.format(number);
+        } else {
+            return String.valueOf(number);
         }
     }
 

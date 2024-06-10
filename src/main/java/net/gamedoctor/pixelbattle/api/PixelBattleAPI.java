@@ -5,6 +5,7 @@ import net.gamedoctor.pixelbattle.PixelBattle;
 import net.gamedoctor.pixelbattle.PixelPlayer;
 import net.gamedoctor.pixelbattle.database.data.CanvasFrame;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -49,5 +50,21 @@ public class PixelBattleAPI {
 
     public LinkedHashMap<Integer, CanvasFrame> getFramesForTimeLapse() {
         return plugin.getDatabaseManager().getFramesForTimeLapse();
+    }
+
+    public boolean paintPixel(Player player, Location blockLocation, Material color, boolean sendMessages) {
+        if (plugin.getMainConfig().getCanvas().contains(blockLocation)) {
+            return plugin.getUtils().paintPixel(player, color, blockLocation, sendMessages, true, true, true);
+        } else {
+            return false;
+        }
+    }
+
+    public boolean paintPixel(Player player, Location blockLocation, Material color, boolean sendMessages, boolean addExp, boolean addPainted, boolean setCooldown) {
+        if (plugin.getMainConfig().getCanvas().contains(blockLocation)) {
+            return plugin.getUtils().paintPixel(player, color, blockLocation, sendMessages, addExp, addPainted, setCooldown);
+        } else {
+            return false;
+        }
     }
 }

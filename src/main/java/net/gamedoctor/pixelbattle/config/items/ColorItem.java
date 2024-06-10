@@ -38,7 +38,7 @@ public class ColorItem extends Item {
                 } else {
                     finalLore.add(line
                             .replace("%level%", String.valueOf(needLevel))
-                            .replace("%exp%", String.valueOf(givesExp)));
+                            .replace("%exp%", plugin.getUtils().getFormattedNumber(givesExp)));
                 }
             }
             setLore(finalLore);

@@ -48,6 +48,11 @@ settings: # General settings
     removeExp: true
     # If true, the option will only apply to other players (If the player paints over his pixel, he will not lose experience)
     onlyOther: true
+  # Если true - все числа будут представлены в более коротком формате. Например: 1000 = 1K, 1000000 = 1M и так далее
+  numberFormatting:
+    enable: false
+    # Количество цифр после запятой
+    fractionDigits: 1
   # Time format per line
   timeStringFormat:
     # If true, only the largest is displayed. For example, not 1 d. 12 h. 5 m. 13 s., but just 1 d.
