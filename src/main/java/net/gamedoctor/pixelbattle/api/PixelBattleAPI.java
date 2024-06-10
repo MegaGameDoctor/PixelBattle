@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.gamedoctor.pixelbattle.PixelBattle;
 import net.gamedoctor.pixelbattle.PixelPlayer;
 import net.gamedoctor.pixelbattle.database.data.CanvasFrame;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -52,16 +53,20 @@ public class PixelBattleAPI {
         return plugin.getDatabaseManager().getFramesForTimeLapse();
     }
 
+    /**
+     * Must be called synchronously
+     */
     public boolean paintPixel(Player player, Location blockLocation, Material color, boolean sendMessages) {
-        if (plugin.getMainConfig().getCanvas().contains(blockLocation)) {
-            return plugin.getUtils().paintPixel(player, color, blockLocation, sendMessages, true, true, true);
-        } else {
-            return false;
-        }
+        return paintPixel(player, blockLocation, color, sendMessages, true, true, true);
     }
 
+    /**
+     * Must be called synchronously
+     */
     public boolean paintPixel(Player player, Location blockLocation, Material color, boolean sendMessages, boolean addExp, boolean addPainted, boolean setCooldown) {
-        if (plugin.getMainConfig().getCanvas().contains(blockLocation)) {
+        if (!Bukkit.getServer().isPrimaryThread()) {
+            throw new IllegalStateException("You can't color a pixel asynchronously!");
+        } else if (plugin.getMainConfig().getCanvas().contains(blockLocation)) {
             return plugin.getUtils().paintPixel(player, color, blockLocation, sendMessages, addExp, addPainted, setCooldown);
         } else {
             return false;
