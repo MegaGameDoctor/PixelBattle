@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 public class WebToolCommunicator {
     private final PixelBattle plugin;
     private final String url = "https://spigot.kosfarix.ru/plugins/PixelBattle/";
+    private final String webToolVersion = "1.1";
 
     public String createCanvasImage() throws Exception {
         File tempStorage = new File(plugin.getDataFolder() + "/tempData.canvas");
@@ -28,7 +29,7 @@ public class WebToolCommunicator {
         }
         writer.close();
 
-        HttpURLConnection httpUrlConnection = (HttpURLConnection) new URL(url + "loadData.php?type=canvas").openConnection();
+        HttpURLConnection httpUrlConnection = (HttpURLConnection) new URL(url + "loadData.php?type=canvas&ver=" + webToolVersion).openConnection();
         return workWithAnswer(tempStorage, httpUrlConnection);
     }
 
@@ -49,7 +50,7 @@ public class WebToolCommunicator {
         }
         writer.close();
 
-        HttpURLConnection httpUrlConnection = (HttpURLConnection) new URL(url + "loadData.php?type=timelapse").openConnection();
+        HttpURLConnection httpUrlConnection = (HttpURLConnection) new URL(url + "loadData.php?type=timelapse&ver=" + webToolVersion).openConnection();
         return workWithAnswer(tempStorage, httpUrlConnection);
     }
 
