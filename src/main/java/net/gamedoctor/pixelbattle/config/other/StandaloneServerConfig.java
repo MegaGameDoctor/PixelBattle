@@ -14,8 +14,8 @@ public class StandaloneServerConfig {
         String path = "standaloneServer.";
         FileConfiguration cfg = plugin.getConfig();
 
-        enable = cfg.getBoolean(path + "enable");
-        redirectOnExit_enable = cfg.getBoolean(path + "redirectOnExit.enable");
-        redirectOnExit_server = cfg.getString(path + "redirectOnExit.server");
+        enable = cfg.getBoolean(path + "enable", false);
+        redirectOnExit_enable = cfg.getBoolean(path + "redirectOnExit.enable", false);
+        redirectOnExit_server = cfg.getString(path + "redirectOnExit.server", "-");
     }
 }
