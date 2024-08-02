@@ -85,7 +85,7 @@ public class PixelBattle extends JavaPlugin {
         webToolCommunicator = new WebToolCommunicator(this);
         pixelBattleAPI = new PixelBattleAPI(this);
 
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+        if (mainConfig.isUsingPlaceholderAPI()) {
             new Placeholders(this).register();
         }
 

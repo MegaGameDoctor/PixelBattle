@@ -16,9 +16,9 @@ public class Hologram {
     private final List<UUID> entitylist = new ArrayList<>();
     private final Location location;
     private final PixelBattle plugin;
-    private List<String> lines;
+    private LinkedList<String> lines;
 
-    public Hologram(PixelBattle plugin, Location location, List<String> text) {
+    public Hologram(PixelBattle plugin, Location location, LinkedList<String> text) {
         this.plugin = plugin;
         this.lines = text;
         this.location = location;
@@ -26,7 +26,7 @@ public class Hologram {
         create();
     }
 
-    public void update(List<String> text) {
+    public void update(LinkedList<String> text) {
         this.lines = text;
         new BukkitRunnable() {
             public void run() {

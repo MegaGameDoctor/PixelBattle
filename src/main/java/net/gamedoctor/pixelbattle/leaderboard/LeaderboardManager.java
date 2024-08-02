@@ -7,7 +7,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 
 public class LeaderboardManager {
     private final PixelBattle plugin;
@@ -48,8 +47,8 @@ public class LeaderboardManager {
         }
     }
 
-    private List<String> getLines(Leaderboard leaderboard) {
-        List<String> lines = new LinkedList<>(leaderboard.getTitle());
+    private LinkedList<String> getLines(Leaderboard leaderboard) {
+        LinkedList<String> lines = new LinkedList<>(leaderboard.getTitle());
         int num = 0;
         HashMap<String, Integer> values = plugin.getDatabaseManager().getSortedForLeaderboard(leaderboard.getValue(), leaderboard.getRows(), leaderboard.getValueType());
 
