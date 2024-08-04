@@ -77,7 +77,7 @@ public class Hologram {
             ArmorStand entity = (ArmorStand) this.location.getWorld().spawnEntity(loc, EntityType.ARMOR_STAND);
 
             entity.setCustomName(line);
-            entity.setCustomNameVisible(true);
+            entity.setCustomNameVisible(!line.isEmpty());
             entity.setInvisible(true);
             entity.setInvulnerable(true);
             entity.setGravity(false);
