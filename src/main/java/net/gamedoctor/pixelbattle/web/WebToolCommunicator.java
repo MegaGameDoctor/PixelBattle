@@ -16,12 +16,9 @@ public class WebToolCommunicator {
     private final String webToolVersion = "1.1";
 
     public String createCanvasImage() throws Exception {
-        File tempStorage = new File(plugin.getDataFolder() + "/tempData.canvas");
-        if (tempStorage.exists()) {
-            tempStorage.delete();
-        }
+        File tempStorage = File.createTempFile("pixelbattle", "tempData.canvas");
+        tempStorage.deleteOnExit();
 
-        tempStorage.createNewFile();
         BufferedWriter writer = new BufferedWriter(new FileWriter(tempStorage, true));
         for (CanvasFrame canvasFrame : plugin.getDatabaseManager().getCanvasPixelsData().values()) {
             writer.write(canvasFrame.getX() + ";" + canvasFrame.getY() + ";" + canvasFrame.getPixelData().getColor().getMaterial().toString() + ";");
@@ -34,12 +31,9 @@ public class WebToolCommunicator {
     }
 
     public String createTimeLapse() throws Exception {
-        File tempStorage = new File(plugin.getDataFolder() + "/tempData.timelapse");
-        if (tempStorage.exists()) {
-            tempStorage.delete();
-        }
+        File tempStorage = File.createTempFile("pixelbattle", "tempData.timelapse");
+        tempStorage.deleteOnExit();
 
-        tempStorage.createNewFile();
         BufferedWriter writer = new BufferedWriter(new FileWriter(tempStorage, true));
         LinkedHashMap<Integer, CanvasFrame> frames = plugin.getDatabaseManager().getFramesForTimeLapse();
         for (int frame : frames.keySet()) {
