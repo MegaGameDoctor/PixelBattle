@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.gamedoctor.pixelbattle.PlaceholderAPI.Placeholders;
 import net.gamedoctor.pixelbattle.api.PixelBattleAPI;
+import net.gamedoctor.pixelbattle.api.callEvents.PixelBattleJoinEvent;
 import net.gamedoctor.pixelbattle.api.callEvents.PixelBattlePreJoinEvent;
 import net.gamedoctor.pixelbattle.api.callEvents.PixelBattleQuitEvent;
 import net.gamedoctor.pixelbattle.board.BoardManager;
@@ -119,7 +120,7 @@ public class PixelBattle extends JavaPlugin {
             PixelBattlePreJoinEvent preJoinEvent = new PixelBattlePreJoinEvent(player);
             Bukkit.getPluginManager().callEvent(preJoinEvent);
             if (!preJoinEvent.isCancelled()) {
-                databaseManager.loadPlayer(player.getName());
+                PixelPlayer loadedPixelPlayer = databaseManager.loadPlayer(player.getName());
 
                 if (mainConfig.isResetPlayer()) {
                     player.setExp(0);
@@ -149,6 +150,8 @@ public class PixelBattle extends JavaPlugin {
                 }
 
                 mainConfig.getMessage_welcome().display(player);
+
+                Bukkit.getPluginManager().callEvent(new PixelBattleJoinEvent(player, loadedPixelPlayer));
             }
         }
     }
