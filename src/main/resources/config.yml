@@ -134,6 +134,9 @@ command: # Main command settings /pixelbattle
   users: # The name of the subcommand. Do not change
     # The right to manage player data through the pixelbattle users team. Set to '-' if the right is not required
     usePermission: "pixelbattle.users.use"
+  mod: # The name of the subcommand. Do not change
+    # The right to moderate the canvas through the /pixelbattle mod command. Set to '-' if the right is not required
+    usePermission: "pixelbattle.mod.use"
 
 standaloneServer: # Use this if PixelBattle is on a separate server. Auto-join will work
   enable: false
@@ -482,6 +485,7 @@ messages: # Message settings. You can use chat, title, ActionBar, sound and broa
         - "&d/%cmd% &7wipe&f: To perform a wipe of data and history of canvas"
         - "&d/%cmd% &7web&f: Working with a WEB Tool"
         - "&d/%cmd% &7users&f: Player management"
+        - "&d/%cmd% &7mod&f: Canvas moderation"
   cmdWebHelp:
     chat:
       enable: true
@@ -498,6 +502,26 @@ messages: # Message settings. You can use chat, title, ActionBar, sound and broa
         - "&d/%cmd% &7users setLevel <name> <number>&f: Set the level for the player"
         - "&d/%cmd% &7users setExp <name> <number>&f: Set the experience for the player"
         - "&d/%cmd% &7users setPainted <name> <number>&f: Set the number of painted pixels for the player"
+  cmdModHelp:
+    chat:
+      enable: true
+      lines:
+        - "&e------------ &9Moderation &e------------"
+        - "&9/%cmd% &7mod rollback <name> <radius> <time>&f: Rollback painted pixels"
+  cmdModRollbackStart:
+    chat:
+      enable: true
+      lines:
+        - "&eRollback of player's &c%target%&e actions in radius &a%radius%&e for &b%time%&e has begun..."
+  cmdModRollbackRunning:
+    actionBar:
+      enable: true
+      message: "&eProcessed: &c%now%&7/&a%total% &7(&b%success%&7)"
+  cmdModRollbackEnd:
+    chat:
+      enable: true
+      lines:
+        - "&aRollback of player's &c%target%&a actions completed. Rollbacked paintings: &e%count%"
   cmdNoPlayer:
     chat:
       enable: true
@@ -551,11 +575,11 @@ messages: # Message settings. You can use chat, title, ActionBar, sound and broa
       enable: true
       lines:
         - "&aThe TimeLapse playback is completed, the canvas is up to date"
-  timelapseAction:
+  canvasLocked:
     chat:
       enable: true
       lines:
-        - "&cYou cannot do this while the TimeLapse playback is active"
+        - "&cYou can't interact with the canvas right now"
   timelapseFrameCounter:
     actionBar:
       enable: true

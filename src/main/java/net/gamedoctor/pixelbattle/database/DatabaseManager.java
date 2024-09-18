@@ -4,8 +4,10 @@ import lombok.Getter;
 import net.gamedoctor.pixelbattle.PixelBattle;
 import net.gamedoctor.pixelbattle.PixelPlayer;
 import net.gamedoctor.pixelbattle.config.items.ColorItem;
+import net.gamedoctor.pixelbattle.config.messages.Placeholder;
 import net.gamedoctor.pixelbattle.database.data.CanvasFrame;
 import net.gamedoctor.pixelbattle.database.data.PaintedPixel;
+import net.gamedoctor.pixelbattle.database.data.PixelRollbackData;
 import net.gamedoctor.pixelbattle.database.data.ResultValue;
 import net.gamedoctor.pixelbattle.database.managers.FileDBManager;
 import net.gamedoctor.pixelbattle.database.managers.MySQLDBManager;
@@ -15,6 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -35,8 +38,6 @@ public class DatabaseManager {
     @Getter
     private final String canvasStateTableName;
     private DBManager dbManager;
-    @Getter
-    private boolean canvasLoading = false;
 
     public DatabaseManager(PixelBattle plugin) {
         this.plugin = plugin;
@@ -77,7 +78,7 @@ public class DatabaseManager {
      */
 
     public void loadCanvasToDB() {
-        canvasLoading = true;
+        plugin.setCanvasLocked(true);
         plugin.getLogger().log(Level.INFO, "The loading of the canvas into the database has begun...");
         LinkedList<Location> canvas = plugin.getMainConfig().getCanvas();
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
@@ -104,7 +105,7 @@ public class DatabaseManager {
                     ((FileDBManager) dbManager).saveFile();
                 }
 
-                canvasLoading = false;
+                plugin.setCanvasLocked(false);
                 plugin.getLogger().log(Level.INFO, "The canvas has been successfully loaded");
             }
         });
@@ -193,19 +194,19 @@ public class DatabaseManager {
         }
     }
 
-    public void checkRemovePixelPainted(String painterName, Location location) {
+    public void checkRemovePixelPaintedAsync(String painterName, Location location) {
         if (paintedPixels.containsKey(location)) {
-            PaintedPixel pixel = paintedPixels.get(location).getLast();
-            if (!plugin.getMainConfig().getLevelingConfig().isRemovePixelsWhenPainted_onlyOther() || !painterName.equals(pixel.getPlayer())) {
+            PaintedPixel pixelData = paintedPixels.get(location).getLast();
+            if (!plugin.getMainConfig().getLevelingConfig().isRemovePixelsWhenPainted_onlyOther() || !painterName.equals(pixelData.getPlayer())) {
                 Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
                     @Override
                     public void run() {
-                        PixelPlayer pixelPlayer = getPlayer(pixel.getPlayer());
+                        PixelPlayer pixelPlayer = getPlayer(pixelData.getPlayer());
                         pixelPlayer.removePainted();
                         if (plugin.getMainConfig().getLevelingConfig().isRemovePixelsWhenPainted_removeExp()) {
-                            pixelPlayer.removeExp(pixel.getColor().getGivesExp());
+                            pixelPlayer.removeExp(pixelData.getColor().getGivesExp());
                         }
-                        savePlayerWithOnlineCheck(pixel.getPlayer());
+                        savePlayerWithOnlineCheck(pixelData.getPlayer());
                     }
                 });
             }
@@ -266,6 +267,7 @@ public class DatabaseManager {
     }
 
     public void wipeData() {
+        plugin.setCanvasLocked(true);
         dbManager.wipeData();
 
         for (PixelPlayer pixelPlayer : loadedPlayers.values()) {
@@ -279,10 +281,11 @@ public class DatabaseManager {
                 }
             }
         }.runTask(plugin);
+        plugin.setCanvasLocked(false);
     }
 
     public void updateCanvasState(Location location, Material color) {
-        if (!plugin.getDatabaseManager().isCanvasLoading()) {
+        if (!plugin.isCanvasLocked()) {
             Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
                 @Override
                 public void run() {
@@ -298,6 +301,14 @@ public class DatabaseManager {
         for (CanvasFrame canvasFrame : dbManager.getAllPixelFrames(true).values()) {
             PaintedPixel pixelData = canvasFrame.getPixelData();
             //paintedPixels.put(canvasFrame.getLocation(), new PaintedPixel(pixelData.getColor(), pixelData.getPlayer(), pixelData.getDate()));
+            addToPaintedPixelsList(canvasFrame.getLocation(), new PaintedPixel(pixelData.getColor(), pixelData.getPlayer(), pixelData.getDate()));
+        }
+    }
+
+    public void rePreparePaintedPixel(Location location) {
+        paintedPixels.remove(location);
+        for (CanvasFrame canvasFrame : dbManager.getAllPixelFrames(true, location).values()) {
+            PaintedPixel pixelData = canvasFrame.getPixelData();
             addToPaintedPixelsList(canvasFrame.getLocation(), new PaintedPixel(pixelData.getColor(), pixelData.getPlayer(), pixelData.getDate()));
         }
     }
@@ -320,6 +331,76 @@ public class DatabaseManager {
         } else {
             return defaultPixelData;
         }
+    }
+
+    private int rollbackPixel(String player, Location pixelLoc, long time) {
+        boolean rollbackNeeded = false;
+        int rollbackedPixels = 0;
+        if (paintedPixels.containsKey(pixelLoc)) {
+            for (PaintedPixel paintedPixel : paintedPixels.get(pixelLoc)) {
+                if (paintedPixel.getPlayer().equals(player) && paintedPixel.getDate() > time) {
+                    rollbackNeeded = true;
+                    break;
+                }
+            }
+        }
+
+        if (rollbackNeeded) {
+            PixelRollbackData pixelRollbackData = dbManager.rollbackPixel(player, pixelLoc, time);
+            //if (pixelRollbackData != null) {
+            for (CanvasFrame removedCanvasFrame : pixelRollbackData.getRemovedCanvasFrames()) {
+                PaintedPixel oldPixelData = removedCanvasFrame.getPixelData();
+                PixelPlayer pixelPlayer = getPlayer(player);
+                pixelPlayer.removePainted();
+                pixelPlayer.removeExp(oldPixelData.getColor().getGivesExp());
+                rollbackedPixels++;
+            }
+            savePlayerWithOnlineCheck(player);
+
+            rePreparePaintedPixel(pixelLoc);
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    pixelLoc.getBlock().setType(pixelRollbackData.getNewCanvasFrame().getPixelData().getColor().getMaterial());
+                }
+            }.runTask(plugin);
+        }
+
+        return rollbackedPixels;
+    }
+
+    public void rollbackPixels(String actorName, String player, List<Location> pixelsLocs, long time) {
+        plugin.setCanvasLocked(true);
+
+        if (pixelsLocs.size() > plugin.getMainConfig().getCanvas().size()) {
+            pixelsLocs.clear();
+            pixelsLocs.addAll(plugin.getMainConfig().getCanvas());
+        }
+
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                int successCounter = 0;
+                int allCounter = 0;
+
+                for (Location pixel : pixelsLocs) {
+                    successCounter += rollbackPixel(player, pixel, time);
+                    allCounter++;
+
+                    plugin.getMainConfig().getMessage_cmdModRollbackRunning().display(Bukkit.getPlayer(actorName),
+                            new Placeholder("%now%", String.valueOf(allCounter)),
+                            new Placeholder("%total%", String.valueOf(pixelsLocs.size())),
+                            new Placeholder("%success%", String.valueOf(successCounter)));
+                }
+
+                Player actor = Bukkit.getPlayer(actorName);
+                if (actor != null && actor.isOnline()) {
+                    plugin.getMainConfig().getMessage_cmdModRollbackEnd().display(actor, new Placeholder("%target%", player), new Placeholder("%count%", String.valueOf(successCounter)));
+                }
+
+                plugin.setCanvasLocked(false);
+            }
+        });
     }
 
     public boolean isLoaded(String name) {

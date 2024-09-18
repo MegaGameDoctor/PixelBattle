@@ -1,15 +1,13 @@
 package net.gamedoctor.pixelbattle.PlaceholderAPI;
 
+import lombok.RequiredArgsConstructor;
 import net.gamedoctor.pixelbattle.PixelBattle;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+@RequiredArgsConstructor
 public final class Placeholders extends Placeholder {
     private final PixelBattle plugin;
-
-    public Placeholders(PixelBattle plugin) {
-        this.plugin = plugin;
-    }
 
     @Override
     public String onPlaceholderRequest(Player player, @NotNull String params) {
@@ -53,7 +51,6 @@ public final class Placeholders extends Placeholder {
             return String.valueOf(plugin.getDatabaseManager().getLoadedPlayers().size());
         }
 
-        return "NULL";
-
+        return "NONE";
     }
 }

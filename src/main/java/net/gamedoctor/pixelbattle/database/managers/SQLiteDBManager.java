@@ -6,6 +6,7 @@ import net.gamedoctor.pixelbattle.config.Config;
 import net.gamedoctor.pixelbattle.database.DBManager;
 import net.gamedoctor.pixelbattle.database.data.CanvasFrame;
 import net.gamedoctor.pixelbattle.database.data.PaintedPixel;
+import net.gamedoctor.pixelbattle.database.data.PixelRollbackData;
 import net.gamedoctor.pixelbattle.database.data.ResultValue;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -196,35 +197,105 @@ public class SQLiteDBManager implements DBManager {
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + pixelLogsTableName + " ORDER BY time");
-            ResultSet set = preparedStatement.executeQuery();
-
-            HashMap<String, CanvasFrame> canvasData = getCanvasData();
-
-            int frame = 0;
-            while (set.next()) {
-                frame++;
-                CanvasFrame canvasFrameFromLocation = canvasData.get(set.getString("location"));
-
-                CanvasFrame newCanvasFrame = new CanvasFrame(
-                        canvasFrameFromLocation.getLocation(),
-                        canvasFrameFromLocation.getX(),
-                        canvasFrameFromLocation.getY(),
-                        plugin.getDatabaseManager().getDefaultPixelData(plugin.getMainConfig().getItems().get(Material.getMaterial(set.getString("newColor"))))
-                );
-
-                if (includeMeta) {
-                    newCanvasFrame.setPixelData(new PaintedPixel(newCanvasFrame.getPixelData().getColor(), set.getString("player"), set.getLong("time")));
-                }
-
-                frames.put(frame, newCanvasFrame);
-            }
-
-            set.close();
+            workWithFramesData(includeMeta, frames, preparedStatement);
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         return frames;
+    }
+
+    public LinkedHashMap<Integer, CanvasFrame> getAllPixelFrames(boolean includeMeta, Location location) {
+        String loc = location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ();
+        LinkedHashMap<Integer, CanvasFrame> frames = new LinkedHashMap<>();
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + pixelLogsTableName + " WHERE location=? ORDER BY time");
+            preparedStatement.setString(1, loc);
+
+            workWithFramesData(includeMeta, frames, preparedStatement);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return frames;
+    }
+
+    private void workWithFramesData(boolean includeMeta, LinkedHashMap<Integer, CanvasFrame> frames, PreparedStatement preparedStatement) throws SQLException {
+        ResultSet set = preparedStatement.executeQuery();
+
+        HashMap<String, CanvasFrame> canvasData = getCanvasData();
+
+        int frame = 0;
+        while (set.next()) {
+            frame++;
+            CanvasFrame canvasFrameFromLocation = canvasData.get(set.getString("location"));
+
+            CanvasFrame newCanvasFrame = new CanvasFrame(
+                    canvasFrameFromLocation.getLocation(),
+                    canvasFrameFromLocation.getX(),
+                    canvasFrameFromLocation.getY(),
+                    plugin.getDatabaseManager().getDefaultPixelData(plugin.getMainConfig().getItems().get(Material.getMaterial(set.getString("newColor"))))
+            );
+
+            if (includeMeta) {
+                newCanvasFrame.setPixelData(new PaintedPixel(newCanvasFrame.getPixelData().getColor(), set.getString("player"), set.getLong("time")));
+            }
+
+            frames.put(frame, newCanvasFrame);
+        }
+
+        set.close();
+    }
+
+    public PixelRollbackData rollbackPixel(String player, Location pixelLoc, long time) {
+        String loc = pixelLoc.getBlockX() + "_" + pixelLoc.getBlockY() + "_" + pixelLoc.getBlockZ();
+        try {
+            List<CanvasFrame> oldCanvasFrames = new ArrayList<>();
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM " + pixelLogsTableName + " WHERE location=? AND player=? AND time > ?");
+            preparedStatement.setString(1, loc);
+            preparedStatement.setString(2, player);
+            preparedStatement.setLong(3, time);
+            ResultSet set = preparedStatement.executeQuery();
+
+            while (set.next()) {
+                oldCanvasFrames.add(new CanvasFrame(pixelLoc, 0, 0,
+                        plugin.getDatabaseManager().getDefaultPixelData(plugin.getMainConfig().getItems().get(Material.getMaterial(set.getString("newColor"))))));
+            }
+
+            if (!oldCanvasFrames.isEmpty()) {
+                preparedStatement = connection.prepareStatement("DELETE FROM " + pixelLogsTableName + " WHERE location=? AND player=? AND time > ?");
+                preparedStatement.setString(1, loc);
+                preparedStatement.setString(2, player);
+                preparedStatement.setLong(3, time);
+                preparedStatement.executeUpdate();
+
+                preparedStatement = connection.prepareStatement("SELECT * FROM " + pixelLogsTableName + " WHERE location=? ORDER BY time DESC LIMIT 1");
+                preparedStatement.setString(1, loc);
+
+                set = preparedStatement.executeQuery();
+
+                CanvasFrame newCanvasFrame = new CanvasFrame(pixelLoc, 0, 0,
+                        plugin.getDatabaseManager().getDefaultPixelData());
+                long newChangeDate = 0L;
+                if (set.next()) {
+                    newCanvasFrame.setPixelData(plugin.getDatabaseManager().getDefaultPixelData(plugin.getMainConfig().getItems().get(Material.getMaterial(set.getString("newColor")))));
+                    newChangeDate = set.getLong("time");
+                }
+
+                preparedStatement = connection.prepareStatement("UPDATE " + canvasStateTableName + " SET color=?, changeDate=? WHERE location=?");
+                preparedStatement.setString(1, newCanvasFrame.getPixelData().getColor().getMaterial().toString());
+                preparedStatement.setLong(2, newChangeDate);
+                preparedStatement.setString(3, loc);
+                preparedStatement.executeUpdate();
+
+                return new PixelRollbackData(newCanvasFrame, oldCanvasFrames);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public HashMap<String, CanvasFrame> getCanvasData() {

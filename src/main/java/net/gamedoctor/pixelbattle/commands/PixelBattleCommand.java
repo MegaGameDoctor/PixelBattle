@@ -94,7 +94,7 @@ public class PixelBattleCommand implements CommandExecutor, TabExecutor {
                 case "timelapse":
                     if (commandSender.hasPermission(cfg.getCommand_timelapse_usePermission()) || cfg.getCommand_timelapse_usePermission().equals("-")) {
                         if (cfg.isSaveCanvasState() && cfg.isLogPixelPaint()) {
-                            if (!plugin.isActiveTimeLapse()) {
+                            if (!plugin.isCanvasLocked()) {
                                 long speed = 8;
 
                                 if (args.length > 1 && utils.isNumber(args[1], true)) {
@@ -105,7 +105,7 @@ public class PixelBattleCommand implements CommandExecutor, TabExecutor {
 
                                 plugin.startTimeLapse(commandSender, speed);
                             } else {
-                                cfg.getMessage_timelapseAction().display(commandSender);
+                                cfg.getMessage_canvasLocked().display(commandSender);
                             }
                         } else {
                             cfg.getMessage_noData().display(commandSender, new Placeholder("%data%", "saveCanvasState, logPixelPaint"));
@@ -116,7 +116,7 @@ public class PixelBattleCommand implements CommandExecutor, TabExecutor {
                     return true;
                 case "wipe":
                     if (commandSender.hasPermission(cfg.getCommand_wipe_usePermission()) || cfg.getCommand_wipe_usePermission().equals("-")) {
-                        if (!plugin.isActiveTimeLapse()) {
+                        if (!plugin.isCanvasLocked()) {
                             cfg.getMessage_wipeStarted().display(commandSender);
                             Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
                                 @Override
@@ -126,7 +126,7 @@ public class PixelBattleCommand implements CommandExecutor, TabExecutor {
                                 }
                             });
                         } else {
-                            cfg.getMessage_timelapseAction().display(commandSender);
+                            cfg.getMessage_canvasLocked().display(commandSender);
                         }
                     } else {
                         cfg.getMessage_cmdNoPerm().display(commandSender);
@@ -204,43 +204,31 @@ public class PixelBattleCommand implements CommandExecutor, TabExecutor {
                                             }
                                             break;
                                         case "setlevel":
-                                            if (args.length > 3) {
-                                                if (utils.isNumber(args[3], true) && Integer.parseInt(args[3]) > 0) {
-                                                    int amount = Integer.parseInt(args[3]);
-                                                    plugin.getDatabaseManager().getPlayer(args[2]).setLevel(amount);
-                                                    plugin.getDatabaseManager().savePlayerWithOnlineCheck(args[2]);
-                                                    cfg.getMessage_cmdSuccess().display(commandSender);
-                                                } else {
-                                                    cfg.getMessage_cmdIncorrect().display(commandSender);
-                                                }
+                                            if (args.length > 3 && utils.isNumber(args[3], true) && Integer.parseInt(args[3]) > 0) {
+                                                int amount = Integer.parseInt(args[3]);
+                                                plugin.getDatabaseManager().getPlayer(args[2]).setLevel(amount);
+                                                plugin.getDatabaseManager().savePlayerWithOnlineCheck(args[2]);
+                                                cfg.getMessage_cmdSuccess().display(commandSender);
                                             } else {
                                                 cfg.getMessage_cmdIncorrect().display(commandSender);
                                             }
                                             break;
                                         case "setexp":
-                                            if (args.length > 3) {
-                                                if (utils.isNumber(args[3], true) && Integer.parseInt(args[3]) >= 0) {
-                                                    int amount = Integer.parseInt(args[3]);
-                                                    plugin.getDatabaseManager().getPlayer(args[2]).setExp(amount);
-                                                    plugin.getDatabaseManager().savePlayerWithOnlineCheck(args[2]);
-                                                    cfg.getMessage_cmdSuccess().display(commandSender);
-                                                } else {
-                                                    cfg.getMessage_cmdIncorrect().display(commandSender);
-                                                }
+                                            if (args.length > 3 && utils.isNumber(args[3], true) && Integer.parseInt(args[3]) >= 0) {
+                                                int amount = Integer.parseInt(args[3]);
+                                                plugin.getDatabaseManager().getPlayer(args[2]).setExp(amount);
+                                                plugin.getDatabaseManager().savePlayerWithOnlineCheck(args[2]);
+                                                cfg.getMessage_cmdSuccess().display(commandSender);
                                             } else {
                                                 cfg.getMessage_cmdIncorrect().display(commandSender);
                                             }
                                             break;
                                         case "setpainted":
-                                            if (args.length > 3) {
-                                                if (utils.isNumber(args[3], true) && Integer.parseInt(args[3]) >= 0) {
-                                                    int amount = Integer.parseInt(args[3]);
-                                                    plugin.getDatabaseManager().getPlayer(args[2]).setPainted(amount);
-                                                    plugin.getDatabaseManager().savePlayerWithOnlineCheck(args[2]);
-                                                    cfg.getMessage_cmdSuccess().display(commandSender);
-                                                } else {
-                                                    cfg.getMessage_cmdIncorrect().display(commandSender);
-                                                }
+                                            if (args.length > 3 && utils.isNumber(args[3], true) && Integer.parseInt(args[3]) >= 0) {
+                                                int amount = Integer.parseInt(args[3]);
+                                                plugin.getDatabaseManager().getPlayer(args[2]).setPainted(amount);
+                                                plugin.getDatabaseManager().savePlayerWithOnlineCheck(args[2]);
+                                                cfg.getMessage_cmdSuccess().display(commandSender);
                                             } else {
                                                 cfg.getMessage_cmdIncorrect().display(commandSender);
                                             }
@@ -258,6 +246,64 @@ public class PixelBattleCommand implements CommandExecutor, TabExecutor {
                         cfg.getMessage_cmdNoPerm().display(commandSender);
                     }
                     return true;
+                case "mod":
+                    if (commandSender instanceof Player) {
+                        if (commandSender.hasPermission(cfg.getCommand_mod_usePermission()) || cfg.getCommand_mod_usePermission().equals("-")) {
+                            if (args.length > 1) {
+                                Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        switch (args[1].toLowerCase()) {
+                                            case "rollback":
+                                                if (!plugin.isCanvasLocked()) {
+                                                    if (args.length > 4 && utils.isNumber(args[3], true)) {
+                                                        String player = args[2];
+                                                        int radius = Integer.parseInt(args[3]);
+                                                        int timeNotFormatted = 1;
+                                                        char timeType = 's';
+                                                        try {
+                                                            timeType = args[4].toCharArray()[args[4].toCharArray().length - 1];
+                                                            timeNotFormatted = Integer.parseInt(args[4].substring(0, args[4].length() - 1));
+                                                        } catch (Exception ignored) {
+                                                        }
+
+                                                        int seconds = switch (timeType) {
+                                                            case 's', 'с' -> timeNotFormatted;
+                                                            case 'm', 'м' -> timeNotFormatted * 60;
+                                                            case 'h', 'ч' -> timeNotFormatted * 60 * 60;
+                                                            case 'd', 'д' -> timeNotFormatted * 60 * 60 * 24;
+                                                            default -> 0;
+                                                        };
+
+                                                        long time = System.currentTimeMillis() - seconds * 1000L;
+
+                                                        cfg.getMessage_cmdModRollbackStart().display(commandSender,
+                                                                new Placeholder("%target%", player),
+                                                                new Placeholder("%radius%", String.valueOf(radius)),
+                                                                new Placeholder("%time%", String.valueOf(timeNotFormatted) + timeType));
+
+                                                        plugin.getDatabaseManager().rollbackPixels(commandSender.getName(), player, utils.getAllNearbyCanvasBlocks(((Player) commandSender).getLocation(), radius), time);
+                                                    } else {
+                                                        cfg.getMessage_cmdIncorrect().display(commandSender);
+                                                    }
+                                                } else {
+                                                    cfg.getMessage_canvasLocked().display(commandSender);
+                                                }
+                                                break;
+                                            default:
+                                                cfg.getMessage_cmdModHelp().display(commandSender, new Placeholder("%cmd%", s));
+                                                break;
+                                        }
+                                    }
+                                });
+                            } else {
+                                cfg.getMessage_cmdModHelp().display(commandSender, new Placeholder("%cmd%", s));
+                            }
+                        } else {
+                            cfg.getMessage_cmdNoPerm().display(commandSender);
+                        }
+                    }
+                    return true;
                 default:
                     cfg.getMessage_cmdHelp().display(commandSender, new Placeholder("%cmd%", s));
             }
@@ -270,7 +316,7 @@ public class PixelBattleCommand implements CommandExecutor, TabExecutor {
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String ss, @NotNull String[] args) {
-        List<String> list = Arrays.asList("join", "leave", "timelapse", "wipe", "web", "users");
+        List<String> list = Arrays.asList("join", "leave", "timelapse", "wipe", "web", "users", "mod");
         String input = args[0].toLowerCase();
         Config cfg = plugin.getMainConfig();
         if (args.length > 1) {
@@ -279,19 +325,29 @@ public class PixelBattleCommand implements CommandExecutor, TabExecutor {
                 list = Arrays.asList("canvas", "timelapse");
             } else if (args[0].equalsIgnoreCase("users") && (commandSender.hasPermission(cfg.getCommand_users_usePermission()) || cfg.getCommand_users_usePermission().equals("-"))) {
                 list = Arrays.asList("wipe", "setLevel", "setExp", "setPainted");
+            } else if (args[0].equalsIgnoreCase("mod") && (commandSender.hasPermission(cfg.getCommand_mod_usePermission()) || cfg.getCommand_mod_usePermission().equals("-"))) {
+                if (args[1].equalsIgnoreCase("rollback")) {
+                    if (args.length > 5) {
+                        list = new ArrayList<>();
+                    } else if (args.length > 4) {
+                        list = Arrays.asList("1s", "10s", "1m", "10m", "1h", "10h", "1d", "10d");
+                    } else if (args.length > 3) {
+                        list = Arrays.asList("2", "5", "10", "30", "40", "50");
+                    } else if (args.length > 2) {
+                        list = new ArrayList<>();
+                    }
+                } else {
+                    list = List.of("rollback");
+                }
             } else {
                 list = new ArrayList<>();
             }
         }
 
-        if (args.length > 2) {
-            input = args[2].toLowerCase();
-            list = new ArrayList<>();
-        }
 
         List<String> completions = null;
         for (String s : list) {
-            if (s.startsWith(input)) {
+            if (s.startsWith(input) || args.length > 2) {
                 if (completions == null) {
                     completions = new ArrayList<>();
                 }

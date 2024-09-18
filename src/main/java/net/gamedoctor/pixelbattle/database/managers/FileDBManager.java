@@ -6,6 +6,7 @@ import net.gamedoctor.pixelbattle.config.Config;
 import net.gamedoctor.pixelbattle.database.DBManager;
 import net.gamedoctor.pixelbattle.database.data.CanvasFrame;
 import net.gamedoctor.pixelbattle.database.data.PaintedPixel;
+import net.gamedoctor.pixelbattle.database.data.PixelRollbackData;
 import net.gamedoctor.pixelbattle.database.data.ResultValue;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -187,6 +188,14 @@ public class FileDBManager implements DBManager {
         } catch (Exception ignored) {
         }
         return frames;
+    }
+
+    public LinkedHashMap<Integer, CanvasFrame> getAllPixelFrames(boolean includeMeta, Location location) {
+        return null;
+    }
+
+    public PixelRollbackData rollbackPixel(String player, Location pixelLoc, long time) {
+        return null;
     }
 
     public HashMap<String, CanvasFrame> getCanvasData() {

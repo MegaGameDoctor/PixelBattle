@@ -198,7 +198,7 @@ public class Utils {
             PaintedPixel previousPixelData = plugin.getDatabaseManager().getPixelData(blockLocation);
 
             if (cfg.isRemovePixelsWhenPainted_enable()) {
-                plugin.getDatabaseManager().checkRemovePixelPainted(player.getName(), blockLocation);
+                plugin.getDatabaseManager().checkRemovePixelPaintedAsync(player.getName(), blockLocation);
             }
 
             if (cfg.isLogPixelPaint()) {
@@ -270,5 +270,22 @@ public class Utils {
             timeFormat = new SimpleDateFormat("-");
         }
         return source.replace("%date%", dateFormat.format(time)).replace("%time%", timeFormat.format(time));
+    }
+
+    public List<Location> getAllNearbyCanvasBlocks(Location center, int radius) {
+        List<Location> result = new ArrayList<>();
+
+        if (radius < 50) {
+            int y = plugin.getMainConfig().getCanvas().get(0).getBlockY();
+            for (int x = center.getBlockX() - radius; x <= center.getBlockX() + radius; x++) {
+                for (int z = center.getBlockZ() - radius; z <= center.getBlockZ() + radius; z++) {
+                    result.add(center.getWorld().getBlockAt(x, y, z).getLocation());
+                }
+            }
+        } else {
+            result.addAll(plugin.getMainConfig().getCanvas());
+        }
+
+        return result;
     }
 }

@@ -48,28 +48,31 @@ public class PixelPlayer {
         if (this.painted > 0) this.painted--;
     }
 
-    public void removeExp(int exp) {
-        if (exp <= 0) return;
+    public void removeExp(int expToRemove) {
+        if (expToRemove <= 0) return;
         Config cfg = plugin.getMainConfig();
         int originalLevel = level;
-        int originalExp = exp;
-        int previousExp = exp;
-        while (exp > 0) {
-            exp--;
+        int originalExp = this.exp;
+        int totalExpBefore = originalExp + plugin.getMainConfig().getLevelingConfig().getExpToNextLevel(level) * (level - 1);
+        int expLost = 0;
+
+        while (expToRemove > 0) {
             if (this.exp > 0) {
                 this.exp--;
+                expToRemove--;
+                expLost++;
             } else {
                 if (this.level > 1) {
                     this.level--;
                     this.exp = plugin.getMainConfig().getLevelingConfig().getExpToNextLevel(this.level);
                 } else {
-                    exp = 0;
                     this.exp = 0;
+                    break;
                 }
             }
         }
 
-        cfg.getMessage_expLost().display(getBukkitPlayer(), new Placeholder("%pExp%", String.valueOf(previousExp)), new Placeholder("%exp%", String.valueOf(originalExp)));
+        cfg.getMessage_expLost().display(getBukkitPlayer(), new Placeholder("%pExp%", String.valueOf(totalExpBefore)), new Placeholder("%exp%", String.valueOf(expLost)));
 
         if (originalLevel != level) {
             cfg.getMessage_levelDown().display(getBukkitPlayer(), new Placeholder("%pLevel%", String.valueOf(originalLevel)), new Placeholder("%level%", String.valueOf(level)));

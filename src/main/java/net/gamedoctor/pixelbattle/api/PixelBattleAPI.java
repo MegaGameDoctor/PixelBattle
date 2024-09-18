@@ -41,8 +41,8 @@ public class PixelBattleAPI {
         plugin.getLeaderboardManager().update(type);
     }
 
-    public boolean isTimeLapseActive() {
-        return plugin.isActiveTimeLapse();
+    public boolean isCanvasLocked() {
+        return plugin.isCanvasLocked();
     }
 
     public HashMap<String, CanvasFrame> getAllCanvasFrames() {

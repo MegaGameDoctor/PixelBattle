@@ -3,6 +3,7 @@ package net.gamedoctor.pixelbattle.database;
 import net.gamedoctor.pixelbattle.PixelBattle;
 import net.gamedoctor.pixelbattle.PixelPlayer;
 import net.gamedoctor.pixelbattle.database.data.CanvasFrame;
+import net.gamedoctor.pixelbattle.database.data.PixelRollbackData;
 import net.gamedoctor.pixelbattle.database.data.ResultValue;
 import org.bukkit.Location;
 
@@ -30,7 +31,11 @@ public interface DBManager {
 
     void wipeData();
 
+    PixelRollbackData rollbackPixel(String player, Location pixelLoc, long time);
+
     HashMap<String, CanvasFrame> getCanvasData();
 
     LinkedHashMap<Integer, CanvasFrame> getAllPixelFrames(boolean includeMeta);
+
+    LinkedHashMap<Integer, CanvasFrame> getAllPixelFrames(boolean includeMeta, Location location);
 }

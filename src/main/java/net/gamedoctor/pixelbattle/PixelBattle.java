@@ -47,7 +47,7 @@ public class PixelBattle extends JavaPlugin {
     private Config mainConfig;
     private Utils utils;
     @Setter
-    private boolean activeTimeLapse = false;
+    private boolean canvasLocked = false;
 
     @Override
     public void onEnable() {
@@ -183,7 +183,7 @@ public class PixelBattle extends JavaPlugin {
         Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
             @Override
             public void run() {
-                activeTimeLapse = true;
+                canvasLocked = true;
 
                 new BukkitRunnable() {
                     public void run() {
@@ -222,7 +222,7 @@ public class PixelBattle extends JavaPlugin {
                     );
                 }
 
-                activeTimeLapse = false;
+                canvasLocked = false;
 
                 mainConfig.getMessage_timelapseEnded().display(actor,
                         new Placeholder("%speed%", String.valueOf(speed)),

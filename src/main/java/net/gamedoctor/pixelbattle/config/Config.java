@@ -73,7 +73,7 @@ public class Config {
     private final Message message_cmdSuccess;
     private final Message message_timelapseStarting;
     private final Message message_timelapseStarted;
-    private final Message message_timelapseAction;
+    private final Message message_canvasLocked;
     private final Message message_timelapseEnded;
     private final Message message_timelapseFrameCounter;
     private final Message message_preventedSameColor;
@@ -87,6 +87,10 @@ public class Config {
     private final Message message_cmdIncorrect;
     private final Message message_expLost;
     private final Message message_levelDown;
+    private final Message message_cmdModHelp;
+    private final Message message_cmdModRollbackStart;
+    private final Message message_cmdModRollbackEnd;
+    private final Message message_cmdModRollbackRunning;
     private final ItemStack exitItem;
     private final int exitItemSlot;
     private final String command_join_usePermission;
@@ -97,6 +101,7 @@ public class Config {
     private final String command_wipe_usePermission;
     private final String command_web_usePermission;
     private final String command_users_usePermission;
+    private final String command_mod_usePermission;
     private final MenuItem menu_back;
     private final MenuItem menu_next;
     private final MenuItem menu_footer;
@@ -204,7 +209,7 @@ public class Config {
         message_cmdSuccess = new Message(plugin, "cmdSuccess");
         message_timelapseStarting = new Message(plugin, "timelapseStarting");
         message_timelapseStarted = new Message(plugin, "timelapseStarted");
-        message_timelapseAction = new Message(plugin, "timelapseAction");
+        message_canvasLocked = new Message(plugin, "canvasLocked");
         message_timelapseEnded = new Message(plugin, "timelapseEnded");
         message_timelapseFrameCounter = new Message(plugin, "timelapseFrameCounter");
         message_preventedSameColor = new Message(plugin, "preventedSameColor");
@@ -218,6 +223,10 @@ public class Config {
         message_cmdIncorrect = new Message(plugin, "cmdIncorrect");
         message_expLost = new Message(plugin, "expLost");
         message_levelDown = new Message(plugin, "levelDown");
+        message_cmdModHelp = new Message(plugin, "cmdModHelp");
+        message_cmdModRollbackStart = new Message(plugin, "cmdModRollbackStart");
+        message_cmdModRollbackEnd = new Message(plugin, "cmdModRollbackEnd");
+        message_cmdModRollbackRunning = new Message(plugin, "cmdModRollbackRunning");
 
         command_join_usePermission = cfg.getString("command.join.usePermission");
         command_join_useOnOtherPermission = cfg.getString("command.join.useOnOtherPermission");
@@ -227,6 +236,7 @@ public class Config {
         command_wipe_usePermission = cfg.getString("command.wipe.usePermission");
         command_web_usePermission = cfg.getString("command.web.usePermission");
         command_users_usePermission = cfg.getString("command.users.usePermission");
+        command_mod_usePermission = cfg.getString("command.mod.usePermission");
 
         menu_back = new MenuItem(plugin, "back");
         menu_next = new MenuItem(plugin, "next");

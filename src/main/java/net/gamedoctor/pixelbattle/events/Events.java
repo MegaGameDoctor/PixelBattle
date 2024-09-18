@@ -41,14 +41,14 @@ public class Events implements Listener {
         if ((event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) && event.getHand() != EquipmentSlot.OFF_HAND && event.hasBlock() && event.getClickedBlock() != null && !event.hasItem()) {
             Location clickedBlock = event.getClickedBlock().getLocation();
             if (plugin.isInPixelBattle(player) && plugin.getMainConfig().getCanvas().contains(clickedBlock)) {
-                if (!plugin.isActiveTimeLapse()) {
+                if (!plugin.isCanvasLocked()) {
                     if (System.currentTimeMillis() > plugin.getDatabaseManager().getPlayer(player.getName()).getNextPixel()) {
                         plugin.getWaitingForChoose().put(player.getName(), new ChooseColorGUI(plugin, player, clickedBlock));
                     } else {
                         plugin.getMainConfig().getMessage_pixelDelay().display(player, new Placeholder("%time%", plugin.getUtils().getTimeToNextPixel(player, false)));
                     }
                 } else {
-                    plugin.getMainConfig().getMessage_timelapseAction().display(player);
+                    plugin.getMainConfig().getMessage_canvasLocked().display(player);
                 }
                 event.setCancelled(true);
             }
