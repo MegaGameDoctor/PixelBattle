@@ -149,6 +149,9 @@ public class PixelBattle extends JavaPlugin {
                     player.setFlying(true);
                 }
 
+                waitingForChoose.remove(player.getName());
+                openedPaintLogs.remove(player.getName());
+
                 mainConfig.getMessage_welcome().display(player);
 
                 Bukkit.getPluginManager().callEvent(new PixelBattleJoinEvent(player, loadedPixelPlayer));
