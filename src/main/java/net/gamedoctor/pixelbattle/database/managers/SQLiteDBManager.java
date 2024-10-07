@@ -90,7 +90,7 @@ public class SQLiteDBManager implements DBManager {
                 connection.prepareStatement("DELETE FROM " + pixelLogsTableName).executeUpdate();
             if (cfg.isSaveCanvasState()) {
                 preparedStatement = connection.prepareStatement("UPDATE " + canvasStateTableName + " SET color=?, changeDate=?");
-                preparedStatement.setString(1, cfg.getDefaultColor().toString());
+                preparedStatement.setString(1, cfg.getDefaultColor().getMaterial().toString());
                 preparedStatement.setLong(2, 0L);
                 preparedStatement.executeUpdate();
             }
