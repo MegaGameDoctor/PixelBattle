@@ -17,7 +17,6 @@ public class WebToolCommunicator {
 
     public String createCanvasImage() throws Exception {
         File tempStorage = File.createTempFile("pixelbattle", "tempData.canvas");
-        tempStorage.deleteOnExit();
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(tempStorage, true));
         for (CanvasFrame canvasFrame : plugin.getDatabaseManager().getCanvasPixelsData().values()) {
@@ -25,6 +24,7 @@ public class WebToolCommunicator {
             writer.newLine();
         }
         writer.close();
+        tempStorage.delete();
 
         HttpURLConnection httpUrlConnection = (HttpURLConnection) new URL(url + "loadData.php?type=canvas&ver=" + webToolVersion).openConnection();
         return workWithAnswer(tempStorage, httpUrlConnection);
@@ -32,7 +32,6 @@ public class WebToolCommunicator {
 
     public String createTimeLapse() throws Exception {
         File tempStorage = File.createTempFile("pixelbattle", "tempData.timelapse");
-        tempStorage.deleteOnExit();
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(tempStorage, true));
         LinkedHashMap<Integer, CanvasFrame> frames = plugin.getDatabaseManager().getFramesForTimeLapse();
@@ -43,6 +42,7 @@ public class WebToolCommunicator {
             writer.newLine();
         }
         writer.close();
+        tempStorage.delete();
 
         HttpURLConnection httpUrlConnection = (HttpURLConnection) new URL(url + "loadData.php?type=timelapse&ver=" + webToolVersion).openConnection();
         return workWithAnswer(tempStorage, httpUrlConnection);
