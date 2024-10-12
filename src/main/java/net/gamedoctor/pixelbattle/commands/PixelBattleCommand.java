@@ -262,7 +262,7 @@ public class PixelBattleCommand implements CommandExecutor, TabExecutor {
                                                         int timeNotFormatted = 1;
                                                         char timeType = 's';
                                                         try {
-                                                            timeType = args[4].toCharArray()[args[4].toCharArray().length - 1];
+                                                            timeType = args[4].toCharArray()[args[4].length() - 1];
                                                             timeNotFormatted = Integer.parseInt(args[4].substring(0, args[4].length() - 1));
                                                         } catch (Exception ignored) {
                                                         }
