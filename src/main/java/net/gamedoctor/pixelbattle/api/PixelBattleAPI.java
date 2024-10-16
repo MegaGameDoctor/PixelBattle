@@ -29,6 +29,14 @@ public class PixelBattleAPI {
         plugin.exitPixelBattle(player);
     }
 
+    public HashMap<Material, String> getAllColorsNames() {
+        HashMap<Material, String> colors = new HashMap<>();
+        for (Material material : plugin.getMainConfig().getItems().keySet()) {
+            colors.put(material, plugin.getMainConfig().getItems().get(material).getName());
+        }
+        return colors;
+    }
+
     public boolean isInPixelBattle(Player player) {
         return plugin.isInPixelBattle(player);
     }
