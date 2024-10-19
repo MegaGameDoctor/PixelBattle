@@ -24,7 +24,6 @@ public class WebToolCommunicator {
             writer.newLine();
         }
         writer.close();
-        tempStorage.delete();
 
         HttpURLConnection httpUrlConnection = (HttpURLConnection) new URL(url + "loadData.php?type=canvas&ver=" + webToolVersion).openConnection();
         return workWithAnswer(tempStorage, httpUrlConnection);
@@ -42,7 +41,6 @@ public class WebToolCommunicator {
             writer.newLine();
         }
         writer.close();
-        tempStorage.delete();
 
         HttpURLConnection httpUrlConnection = (HttpURLConnection) new URL(url + "loadData.php?type=timelapse&ver=" + webToolVersion).openConnection();
         return workWithAnswer(tempStorage, httpUrlConnection);

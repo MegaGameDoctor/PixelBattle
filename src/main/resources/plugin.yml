@@ -1,6 +1,6 @@
 name: PixelBattle
 main: net.gamedoctor.pixelbattle.PixelBattle
-version: "2.4.2"
+version: "2.4.3"
 api-version: "1.16"
 load: STARTUP
 author: _GameDoctor_
