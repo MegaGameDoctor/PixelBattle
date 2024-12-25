@@ -19,6 +19,7 @@ import net.gamedoctor.pixelbattle.events.WorldLoadListener;
 import net.gamedoctor.pixelbattle.gui.ChooseColorGUI;
 import net.gamedoctor.pixelbattle.gui.PaintLogsGUI;
 import net.gamedoctor.pixelbattle.leaderboard.LeaderboardManager;
+import net.gamedoctor.pixelbattle.utils.RestorablePlayerData;
 import net.gamedoctor.pixelbattle.utils.Utils;
 import net.gamedoctor.pixelbattle.web.WebToolCommunicator;
 import net.gamedoctor.plugins.Metrics;
@@ -122,12 +123,18 @@ public class PixelBattle extends JavaPlugin {
             if (!preJoinEvent.isCancelled()) {
                 PixelPlayer loadedPixelPlayer = databaseManager.loadPlayer(player.getName());
 
+                if (mainConfig.isRestoreDataOnExit()) {
+                    loadedPixelPlayer.setRestorablePlayerData(new RestorablePlayerData(player));
+                }
+
                 if (mainConfig.isResetPlayer()) {
                     player.setExp(0);
                     player.setLevel(0);
                     player.getInventory().clear();
                     player.setFoodLevel(20);
                     player.setHealth(player.getHealthScale());
+                    player.getActivePotionEffects().clear();
+                    player.setFireTicks(0);
                 }
 
                 if (!mainConfig.getDefaultGamemode().equals("NO")) {
@@ -161,12 +168,8 @@ public class PixelBattle extends JavaPlugin {
 
     public void exitPixelBattle(Player player) {
         if (isInPixelBattle(player)) {
+            PixelPlayer pixelPlayer = databaseManager.getPlayer(player.getName());
             databaseManager.savePlayer(player.getName());
-
-            if (mainConfig.isEnableFly()) {
-                player.setFlying(false);
-                player.setAllowFlight(false);
-            }
 
             if (mainConfig.getBoardConfig().isEnable()) {
                 boardManager.removeScoreboard(player);
@@ -176,7 +179,13 @@ public class PixelBattle extends JavaPlugin {
                 player.getInventory().remove(mainConfig.getExitItem());
             }
 
-            player.teleport(mainConfig.getExitSpawn());
+            if (mainConfig.isRestoreDataOnExit()) {
+                pixelPlayer.getRestorablePlayerData().restore(!mainConfig.isExitSpawn_teleportOnExit());
+            }
+
+            if (mainConfig.isExitSpawn_teleportOnExit()) {
+                player.teleport(mainConfig.getExitSpawn());
+            }
 
             Bukkit.getPluginManager().callEvent(new PixelBattleQuitEvent(player));
         }

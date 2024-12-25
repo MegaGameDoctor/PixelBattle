@@ -33,12 +33,14 @@ public class Config {
     private final boolean allowKnock;
     private final boolean enableFly;
     private final boolean blockModify;
+    private final boolean restoreDataOnExit;
     private final ColorItem defaultColor;
     private final String defaultGamemode;
     private final String gui_colorSelectionTitle;
     private final String gui_paintLogsTitle;
     private final Location spawn;
     private final Location exitSpawn;
+    private final boolean exitSpawn_teleportOnExit;
     private final LinkedList<Location> canvas;
     private final HashMap<Material, ColorItem> items = new LinkedHashMap<>();
     private final StandaloneServerConfig standaloneServerConfig;
@@ -134,6 +136,7 @@ public class Config {
         saveCanvasState = cfg.getBoolean("settings.saveCanvasState", true);
         preventPaintSame = cfg.getBoolean("settings.preventPaintSame", false);
         cooldownPermission = cfg.getString("settings.cooldownPermission");
+        restoreDataOnExit = cfg.getBoolean("settings.restoreDataOnExit", true);
 
         if (cfg.getBoolean("settings.numberFormatting.enable", false)) {
             NumberFormat numberFormat = NumberFormat.getCompactNumberInstance(Locale.US, NumberFormat.Style.SHORT);
@@ -154,6 +157,7 @@ public class Config {
         World world = Bukkit.getWorld(cfg.getString("canvas.world", "world"));
         spawn = new Location(world, cfg.getDouble("canvas.spawn.x"), cfg.getDouble("canvas.spawn.y"), cfg.getDouble("canvas.spawn.z"), Float.parseFloat(cfg.getString("canvas.spawn.yaw", "0")), Float.parseFloat(cfg.getString("canvas.spawn.pitch", "0")));
         exitSpawn = new Location(world, cfg.getDouble("canvas.exitSpawn.x"), cfg.getDouble("canvas.exitSpawn.y"), cfg.getDouble("canvas.exitSpawn.z"), Float.parseFloat(cfg.getString("canvas.exitSpawn.yaw", "0")), Float.parseFloat(cfg.getString("canvas.exitSpawn.pitch", "0")));
+        exitSpawn_teleportOnExit = cfg.getBoolean("canvas.exitSpawn.teleportOnExit", true);
 
         LocationsCuboid canvasCuboid = new LocationsCuboid(
                 new Location(world, cfg.getDouble("canvas.posOne.x"), cfg.getDouble("canvas.posOne.y"), cfg.getDouble("canvas.posOne.z")),

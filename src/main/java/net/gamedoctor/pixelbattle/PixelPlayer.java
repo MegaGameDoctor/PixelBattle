@@ -9,6 +9,7 @@ import net.gamedoctor.pixelbattle.config.Config;
 import net.gamedoctor.pixelbattle.config.messages.Placeholder;
 import net.gamedoctor.pixelbattle.config.other.leveling.Level;
 import net.gamedoctor.pixelbattle.config.other.leveling.LevelingConfig;
+import net.gamedoctor.pixelbattle.utils.RestorablePlayerData;
 import net.gamedoctor.pixelbattle.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -39,6 +40,9 @@ public class PixelPlayer {
     @Getter
     @Setter
     private int level;
+    @Getter
+    @Setter
+    private RestorablePlayerData restorablePlayerData;
 
     public void addPainted() {
         this.painted++;

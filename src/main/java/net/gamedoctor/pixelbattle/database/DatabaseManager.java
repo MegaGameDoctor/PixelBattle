@@ -162,7 +162,7 @@ public class DatabaseManager {
         if (!isLoaded(name)) {
             PixelPlayer pixelPlayer = dbManager.loadPlayer(name);
             if (pixelPlayer == null) {
-                pixelPlayer = new PixelPlayer(plugin, name, 0, 0L, System.currentTimeMillis(), 0L, 0, plugin.getMainConfig().getLevelingConfig().getDefaultLevel());
+                pixelPlayer = new PixelPlayer(plugin, name, 0, 0L, System.currentTimeMillis(), 0L, 0, plugin.getMainConfig().getLevelingConfig().getDefaultLevel(), null);
             }
 
             loadedPlayers.put(name, pixelPlayer);

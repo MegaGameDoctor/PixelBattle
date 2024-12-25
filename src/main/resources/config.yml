@@ -24,6 +24,8 @@ settings: # General settings
   noFall: false
   # Enables flight mode for everyone who is on PixelBattle
   enableFly: true
+  # If true, the player's inventory and other data will be restored as soon as he exits PixeBattle
+  restoreDataOnExit: true
   # If false, the blocks cannot be broken or placed everywhere. If true, the blocks can be broken or placed everywhere except on the canvas
   blockModify: false
   # Prohibit players from interacting with chests, stoves, workbenches and other blocks
@@ -73,6 +75,10 @@ canvas: # Canvas settings
     pitch: 1
   # The place where players will appear when exiting PixelBattle
   exitSpawn:
+    # If true, the player will be teleported to these coordinates after exiting PixelBattle
+    teleportOnExit: true
+    # Specify only if the exit from PixelBattle is in another world
+    world: "world"
     x: 1
     y: 1
     z: 1

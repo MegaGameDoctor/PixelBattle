@@ -135,7 +135,7 @@ public class FileDBManager implements DBManager {
     public PixelPlayer loadPlayer(String name) {
         String path = playersTableName + "." + name + ".";
         if (db.isConfigurationSection(path.substring(0, path.length() - 1))) {
-            return new PixelPlayer(plugin, name, db.getInt(path + "painted"), db.getLong(path + "nextPixel"), System.currentTimeMillis(), db.getLong(path + "playedTime"), db.getInt(path + "exp"), db.getInt(path + "level"));
+            return new PixelPlayer(plugin, name, db.getInt(path + "painted"), db.getLong(path + "nextPixel"), System.currentTimeMillis(), db.getLong(path + "playedTime"), db.getInt(path + "exp"), db.getInt(path + "level"), null);
         }
         return null;
     }

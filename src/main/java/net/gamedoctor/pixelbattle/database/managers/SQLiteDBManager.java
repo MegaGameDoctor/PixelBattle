@@ -137,7 +137,7 @@ public class SQLiteDBManager implements DBManager {
             preparedStatement.setString(1, name);
             ResultSet set = preparedStatement.executeQuery();
             if (set.next()) {
-                return new PixelPlayer(plugin, name, set.getInt("painted"), set.getLong("nextPixel"), System.currentTimeMillis(), set.getLong("playedTime"), set.getInt("exp"), set.getInt("level"));
+                return new PixelPlayer(plugin, name, set.getInt("painted"), set.getLong("nextPixel"), System.currentTimeMillis(), set.getLong("playedTime"), set.getInt("exp"), set.getInt("level"), null);
             }
             set.close();
         } catch (SQLException e) {
