@@ -94,8 +94,18 @@ public class GuardEvents implements Listener {
                 }
             }
         } else if (event.getDamager() instanceof Player player) {
-            if (plugin.isInPixelBattle(player) && plugin.getMainConfig().isGuardPlayer() && !plugin.getMainConfig().isAllowKnock()) {
-                event.setCancelled(true);
+            if (plugin.isInPixelBattle(player) && plugin.getMainConfig().isGuardPlayer()) {
+                if (!plugin.getMainConfig().isAllowKnock()) {
+                    event.setCancelled(true);
+                } else if (plugin.getMainConfig().isCloseInventoryOnKnock()) {
+                    if (event.getEntity() instanceof Player attacker) {
+                        if (plugin.getWaitingForChoose().containsKey(attacker.getName()) || plugin.getOpenedPaintLogs().containsKey(attacker.getName())) {
+                            attacker.closeInventory();
+                            plugin.getWaitingForChoose().remove(attacker.getName());
+                            plugin.getOpenedPaintLogs().remove(attacker.getName());
+                        }
+                    }
+                }
             }
         }
     }

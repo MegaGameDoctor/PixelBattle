@@ -31,6 +31,7 @@ public class Config {
     private final boolean resetPlayer;
     private final boolean guardPlayer;
     private final boolean allowKnock;
+    private final boolean closeInventoryOnKnock;
     private final boolean enableFly;
     private final boolean blockModify;
     private final boolean restoreDataOnExit;
@@ -120,6 +121,7 @@ public class Config {
         resetPlayer = cfg.getBoolean("settings.resetPlayer", false);
         guardPlayer = cfg.getBoolean("settings.guardPlayer", true);
         allowKnock = cfg.getBoolean("settings.allowKnock", false);
+        closeInventoryOnKnock = cfg.getBoolean("settings.closeInventoryOnKnock", true);
         enableFly = cfg.getBoolean("settings.enableFly", true);
         blockModify = cfg.getBoolean("settings.blockModify", false);
         noFall = cfg.getBoolean("settings.noFall", false);

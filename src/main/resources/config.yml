@@ -20,6 +20,8 @@ settings: # General settings
   guardPlayer: true
   # Allows players to hit each other without causing damage
   allowKnock: false
+  # If true, the inventory will close when the player is hit by another player
+  closeInventoryOnKnock: true
   # Prevents players from falling out of the world
   noFall: false
   # Enables flight mode for everyone who is on PixelBattle
