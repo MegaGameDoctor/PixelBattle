@@ -1,12 +1,13 @@
 package net.gamedoctor.pixelbattle.PlaceholderAPI;
 
 import lombok.RequiredArgsConstructor;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.gamedoctor.pixelbattle.PixelBattle;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 @RequiredArgsConstructor
-public final class Placeholders extends Placeholder {
+public final class Placeholders extends PlaceholderExpansion {
     private final PixelBattle plugin;
 
     @Override
@@ -52,5 +53,30 @@ public final class Placeholders extends Placeholder {
         }
 
         return "NONE";
+    }
+
+    @Override
+    public @NotNull String getIdentifier() {
+        return "pixelbattle";
+    }
+
+    @Override
+    public @NotNull String getAuthor() {
+        return "_GameDoctor_";
+    }
+
+    @Override
+    public @NotNull String getVersion() {
+        return "1.0.0";
+    }
+
+    @Override
+    public boolean persist() {
+        return true;
+    }
+
+    @Override
+    public boolean canRegister() {
+        return true;
     }
 }
